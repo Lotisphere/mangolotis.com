@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mangolotis & Haru</title>
+    <style>
+        /* 1. 全局样式重置 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%; /* 让网页高度占满屏幕 */
+            background-color: #ffffff; /* 纯白背景 */
+        }
+
+        /* 2. 布局核心：Flexbox 居中大法 */
+        body {
+            display: flex;             /* 开启弹性布局 */
+            flex-direction: column;    /* 让内容从上到下排列 (图片在上，文字在下) */
+            justify-content: center;   /* 垂直方向居中 */
+            align-items: center;       /* 水平方向居中 */
+        }
+
+        /* 3. 图片样式 */
+        .avatar {
+            width: 300px;              /* 设置图片宽度，太大不好看 */
+            height: auto;              /* 高度自动，保持比例 */
+            margin-bottom: 20px;       /* 图片和文字之间留点空隙 */
+            /* 也可以加点圆角或者阴影，不过极简风就不加啦 */
+        }
+
+        /* 4. 文字样式 */
+        .title {
+            font-family: "Times New Roman", Times, serif; /* 衬线体 */
+            font-size: 24px;           /* 字号大小 */
+            color: #444444;            /* 灰黑色 */
+            letter-spacing: 1px;       /* 字间距稍微大一点，显得高级 */
+            font-weight: normal;       /* 不加粗，保持优雅 */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 这里是图片，记得把你的图片重命名为 haru.png 哦！ -->
+    <img src="haru.png" alt="Cute Haru" class="avatar">
+
+    <!-- 这里是文字 -->
+    <div class="title">Mangolotis, Haru</div>
+
+</body>
+</html>
