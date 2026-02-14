@@ -23,12 +23,13 @@
             display: flex;
             width: 100%;
             height: 100%;
+            flex-direction: row; /* Default: Left-Right */
         }
 
         /* Left Side: 3D Model */
         .left-panel {
-            flex: 1; /* Take up 50% space */
-            background-color: #f9f9f9; /* Slight contrast */
+            flex: 1.2; /* Give 3D model slightly more space (60%) */
+            background-color: #f9f9f9; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,7 +38,7 @@
 
         /* Right Side: Original Content */
         .right-panel {
-            flex: 1; /* Take up 50% space */
+            flex: 0.8; /* 40% space */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -50,58 +51,29 @@
             width: 100%;
             height: 100%;
             --poster-color: transparent;
+            /* Fix: Center the model better */
+            display: block; 
         }
 
-        /* Original Content Styles */
-        .avatar {
-            width: 300px;
-            height: auto;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .avatar:hover {
-            transform: scale(1.05); /* Subtle hover effect */
-        }
-
-        .title {
-            font-size: 24px;
-            color: #444444;
-            letter-spacing: 1px;
-            font-weight: normal;
-        }
-
-        /* 3. Heart Animation Styles */
-        .heart {
-            position: absolute;
-            color: #ff6b6b; /* Cute pink/red */
-            font-size: 24px;
-            pointer-events: none; /* Let clicks pass through */
-            user-select: none;
-            animation: floatUp 0.8s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-50px) scale(1.5);
-                opacity: 0;
-            }
-        }
-
-        /* Mobile Responsive */
+        /* Mobile Responsive: Stack layout */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column;
+                flex-direction: column; /* Top-Bottom on mobile */
             }
-            .left-panel, .right-panel {
-                flex: 1;
+            .left-panel {
+                flex: 1; /* 50% height */
                 width: 100%;
             }
+            .right-panel {
+                flex: 1; /* 50% height */
+                width: 100%;
+                padding: 20px 0;
+            }
             .avatar {
-                width: 200px;
+                width: 180px; /* Smaller image on mobile */
+            }
+            .title {
+                font-size: 20px;
             }
         }
     </style>
@@ -126,7 +98,7 @@
                 ar-modes="webxr scene-viewer quick-look"
                 shadow-intensity="1"
                 auto-rotate
-                camera-orbit="45deg 55deg 2.5m"
+                camera-orbit="0deg 75deg 105%" 
                 field-of-view="30deg">
             </model-viewer>
         </div>
