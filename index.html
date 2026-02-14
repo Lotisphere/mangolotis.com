@@ -3,49 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mangolotis & Haru</title>
+    <title>Mangolotis & Haru - 3D Evolution</title>
+    <!-- Import Model Viewer for 3D & AR -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
-        /* 1. 全局样式重置 */
+        /* 1. Global Reset */
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%; /* 让网页高度占满屏幕 */
-            background-color: #ffffff; /* 纯白背景 */
+            height: 100%;
+            width: 100%;
+            background-color: #ffffff;
+            font-family: "Times New Roman", Times, serif;
+            overflow: hidden; /* Prevent scrolling for the full-screen app feel */
         }
 
-        /* 2. 布局核心：Flexbox 居中大法 */
-        body {
-            display: flex;             /* 开启弹性布局 */
-            flex-direction: column;    /* 让内容从上到下排列 (图片在上，文字在下) */
-            justify-content: center;   /* 垂直方向居中 */
-            align-items: center;       /* 水平方向居中 */
+        /* 2. Main Layout: Split Screen */
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
 
-        /* 3. 图片样式 */
+        /* Left Side: 3D Model */
+        .left-panel {
+            flex: 1; /* Take up 50% space */
+            background-color: #f9f9f9; /* Slight contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Right Side: Original Content */
+        .right-panel {
+            flex: 1; /* Take up 50% space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+        }
+
+        /* 3D Model Viewer Style */
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+        }
+
+        /* Original Content Styles */
         .avatar {
-            width: 300px;              /* 设置图片宽度，太大不好看 */
-            height: auto;              /* 高度自动，保持比例 */
-            margin-bottom: 20px;       /* 图片和文字之间留点空隙 */
-            /* 也可以加点圆角或者阴影，不过极简风就不加啦 */
+            width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .avatar:hover {
+            transform: scale(1.05); /* Subtle hover effect */
         }
 
-        /* 4. 文字样式 */
         .title {
-            font-family: "Times New Roman", Times, serif; /* 衬线体 */
-            font-size: 24px;           /* 字号大小 */
-            color: #444444;            /* 灰黑色 */
-            letter-spacing: 1px;       /* 字间距稍微大一点，显得高级 */
-            font-weight: normal;       /* 不加粗，保持优雅 */
+            font-size: 24px;
+            color: #444444;
+            letter-spacing: 1px;
+            font-weight: normal;
+        }
+
+        /* 3. Heart Animation Styles */
+        .heart {
+            position: absolute;
+            color: #ff6b6b; /* Cute pink/red */
+            font-size: 24px;
+            pointer-events: none; /* Let clicks pass through */
+            user-select: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .left-panel, .right-panel {
+                flex: 1;
+                width: 100%;
+            }
+            .avatar {
+                width: 200px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 这里是图片，记得把你的图片重命名为 haru.png 哦！ -->
-    <img src="haru.png" alt="Cute Haru" class="avatar">
+    <div class="container">
+        <!-- LEFT: 3D Haru -->
+        <div class="left-panel">
+            <!-- 
+                src: The 3D model file
+                camera-controls: Allows mouse/touch interaction
+                ar: Enables AR on mobile
+                shadow-intensity: Realistic shadows
+                auto-rotate: Spins slowly when idle
+            -->
+            <model-viewer 
+                src="haru_2test_web.glb" 
+                alt="3D Haru Model"
+                camera-controls 
+                ar
+                ar-modes="webxr scene-viewer quick-look"
+                shadow-intensity="1"
+                auto-rotate
+                camera-orbit="45deg 55deg 2.5m"
+                field-of-view="30deg">
+            </model-viewer>
+        </div>
 
-    <!-- 这里是文字 -->
-    <div class="title">Mangolotis, Haru</div>
+        <!-- RIGHT: Mangolotis & 2D Haru -->
+        <div class="right-panel">
+            <img src="haru.png" alt="Cute Haru" class="avatar">
+            <div class="title">Mangolotis, Haru</div>
+        </div>
+    </div>
+
+    <script>
+        // Heart Click Effect Logic
+        document.addEventListener('click', function(e) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤'; // You can change this to 💖 or 🎀
+            
+            // Randomize position slightly around the click
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            
+            document.body.appendChild(heart);
+
+            // Remove after animation completes (0.8s)
+            setTimeout(() => {
+                heart.remove();
+            }, 800);
+        });
+    </script>
 
 </body>
 </html>
