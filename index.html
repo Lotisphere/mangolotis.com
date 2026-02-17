@@ -18,18 +18,60 @@
             overflow: hidden; /* Prevent scrolling for the full-screen app feel */
         }
 
+        /* --- INTRO SCREEN STYLES --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; /* White background for clean look */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000; /* Ensure it's on top of everything */
+            transition: opacity 0.8s ease-out; /* Smooth fade out */
+        }
+
+        #intro-logo {
+            width: 1080px; /* Adjust size as needed */
+            max-width: 80%;
+            opacity: 0; /* Start hidden for fade-in effect */
+            transition: opacity 1.5s ease-in, transform 0.3s ease; /* Fade in & Zoom */
+            cursor: pointer;
+        }
+
+        #intro-logo.visible {
+            opacity: 1; /* Fade in state */
+        }
+
+        #intro-logo:hover {
+            transform: scale(1.1); /* Zoom effect on hover */
+        }
+
+        #intro-screen.hidden {
+            opacity: 0;
+            pointer-events: none; /* Let clicks pass through after fade out */
+        }
+
         /* 2. Main Layout: Split Screen */
         .container {
             display: flex;
             width: 100%;
             height: 100%;
             flex-direction: row; /* Default: Left-Right */
+            opacity: 0; /* Hide initially until intro is done */
+            transition: opacity 1s ease-in;
+        }
+
+        .container.visible {
+            opacity: 1;
         }
 
         /* Left Side: 3D Model */
         .left-panel {
             flex: 1.2; /* Give 3D model slightly more space (60%) */
-            background-color: #f9f9f9; 
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -121,7 +163,11 @@
 </head>
 <body>
 
-    <div class="container">
+    <div id="intro-screen">
+        <img src="mangolotis_logo.png" alt="Mangolotis Logo" id="intro-logo">
+    </div>
+
+    <div class="container" id="main-content">
         <!-- LEFT: 3D Haru -->
         <div class="left-panel">
             <!-- 
@@ -154,8 +200,31 @@
     </div>
 
     <script>
+        // --- INTRO SCREEN LOGIC ---
+        const introScreen = document.getElementById('intro-screen');
+        const introLogo = document.getElementById('intro-logo');
+        const mainContent = document.getElementById('main-content');
+
+        // Fade in logo after a slight delay
+        setTimeout(() => {
+            introLogo.classList.add('visible');
+        }, 500);
+
+        // Click to enter
+        introLogo.addEventListener('click', () => {
+            introScreen.classList.add('hidden'); // Fade out intro
+            setTimeout(() => {
+                introScreen.style.display = 'none'; // Remove from layout
+                mainContent.classList.add('visible'); // Fade in main content
+            }, 800); // Wait for fade out animation
+        });
+
+        // --- HEART ANIMATION LOGIC ---
         // Heart Click Effect Logic
         document.addEventListener('click', function(e) {
+            // Only spawn hearts if the intro screen is hidden
+            if (!introScreen.classList.contains('hidden')) return; 
+
             const heart = document.createElement('div');
             heart.classList.add('heart');
             heart.innerHTML = '❤'; 
