@@ -6,6 +6,8 @@
     <title>Mangolotis & Haru - 3D Evolution</title>
     <!-- Import Model Viewer for 3D & AR -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <!-- Import Google Font Shippori Mincho -->
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
     <style>
         /* 1. Global Reset */
         body, html {
@@ -25,28 +27,60 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ffffff; /* White background for clean look */
+            background-color: #000000;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-end; /* Align to the right */
+            align-items: center; /* Center vertically */
             z-index: 10000; /* Ensure it's on top of everything */
             transition: opacity 0.8s ease-out; /* Smooth fade out */
-        }
-
-        #intro-logo {
-            width: 1080px; /* Adjust size as needed */
-            max-width: 80%;
-            opacity: 0; /* Start hidden for fade-in effect */
-            transition: opacity 1.5s ease-in, transform 0.3s ease; /* Fade in & Zoom */
             cursor: pointer;
+            overflow: hidden;
         }
 
-        #intro-logo.visible {
+        #intro-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translateX(-50%) translateY(-50%);
+            z-index: -1;
+            object-fit: cover;
+        }
+
+        #intro-overlay {
+            position: relative;
+            margin-right: 4%; /* Push slightly left from the right edge */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0; /* Start hidden for fade-in effect */
+            transition: opacity 2s ease-in; /* Slow fade in */
+        }
+
+        #intro-overlay.visible {
             opacity: 1; /* Fade in state */
         }
 
+        #intro-logo {
+            width: 500px; /* Adjust size as needed */
+            max-width: 80vw;
+            transition: transform 0.3s ease;
+        }
+
         #intro-logo:hover {
-            transform: scale(1.1); /* Zoom effect on hover */
+            transform: scale(1.05); /* Zoom effect on hover */
+        }
+
+        #intro-text {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 28px;
+            color: #ffffff;
+            margin-top: 20px;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
         }
 
         #intro-screen.hidden {
@@ -158,27 +192,31 @@
             .title {
                 font-size: 20px;
             }
+            #intro-overlay {
+                margin-right: 0;
+                justify-content: center;
+            }
+            #intro-screen {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
     <div id="intro-screen">
-        <img src="mangolotis_logo.png" alt="Mangolotis Logo" id="intro-logo">
+        <video autoplay muted loop playsinline id="intro-video">
+            <source src="网页.mp4" type="video/mp4">
+        </video>
+        <div id="intro-overlay">
+            <img src="mangolotis_white.png" alt="Mangolotis Logo" id="intro-logo">
+            <div id="intro-text">Trying to Feel Alive</div>
+        </div>
     </div>
 
     <div class="container" id="main-content">
         <!-- LEFT: 3D Haru -->
         <div class="left-panel">
-            <!-- 
-                src: The 3D model file
-                camera-controls: Allows mouse/touch interaction
-                ar: Enables AR on mobile
-                shadow-intensity: Realistic shadows
-                auto-rotate: Spins slowly when idle
-                camera-orbit: Controls initial camera position
-                camera-target: Where the camera looks at
-            -->
             <model-viewer 
                 src="haru_2test_web.glb" 
                 alt="3D Haru Model"
@@ -202,16 +240,16 @@
     <script>
         // --- INTRO SCREEN LOGIC ---
         const introScreen = document.getElementById('intro-screen');
-        const introLogo = document.getElementById('intro-logo');
+        const introOverlay = document.getElementById('intro-overlay');
         const mainContent = document.getElementById('main-content');
 
-        // Fade in logo after a slight delay
+        // Fade in logo & text after a slight delay
         setTimeout(() => {
-            introLogo.classList.add('visible');
-        }, 500);
+            introOverlay.classList.add('visible');
+        }, 800);
 
-        // Click to enter
-        introLogo.addEventListener('click', () => {
+        // Click anywhere on intro screen to enter
+        introScreen.addEventListener('click', () => {
             introScreen.classList.add('hidden'); // Fade out intro
             setTimeout(() => {
                 introScreen.style.display = 'none'; // Remove from layout
@@ -227,7 +265,7 @@
 
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            heart.innerHTML = '❤'; 
+            heart.innerHTML = '❤️'; 
             
             // Randomize position slightly around the click
             const x = e.clientX;
