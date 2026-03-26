@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mangolotis & Haru - 3D Evolution</title>
-    <!-- Import Model Viewer for 3D & AR -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <title>Mangolotis - Indie Game Progress</title>
     <!-- Import Google Font Shippori Mincho -->
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
     <style>
@@ -13,14 +11,14 @@
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
             width: 100%;
-            background-color: #ffffff;
-            font-family: "Times New Roman", Times, serif;
-            overflow: hidden; /* Prevent scrolling for the full-screen app feel */
+            height: 100%;
+            background-color: #000000;
+            font-family: 'Shippori Mincho', serif;
+            overflow: hidden; /* Prevent scrolling */
         }
 
-        /* --- INTRO SCREEN STYLES --- */
+        /* ================= INTRO SCREEN ================= */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -88,110 +86,106 @@
             pointer-events: none; /* Let clicks pass through after fade out */
         }
 
-        /* 2. Main Layout: Split Screen */
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            flex-direction: row; /* Default: Left-Right */
-            opacity: 0; /* Hide initially until intro is done */
-            transition: opacity 1s ease-in;
-        }
-
-        .container.visible {
-            opacity: 1;
-        }
-
-        /* Left Side: 3D Model */
-        .left-panel {
-            flex: 1.2; /* Give 3D model slightly more space (60%) */
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* ================= MAIN CONTENT ================= */
+        #main-content {
             position: relative;
-        }
-
-        /* Right Side: Original Content */
-        .right-panel {
-            flex: 0.8; /* 40% space */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
-        }
-
-        /* 3D Model Viewer Style */
-        model-viewer {
             width: 100%;
             height: 100%;
-            --poster-color: transparent;
-            display: block; 
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease-in;
+            z-index: 1;
         }
 
-        /* Original Content Styles */
-        .avatar {
-            width: 80%; /* Responsive width: 80% of the right panel */
-            max-width: 400px; /* But never wider than 400px on desktop */
-            height: auto;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .avatar:hover {
-            transform: scale(1.05); /* Subtle hover effect */
+        #main-content.visible {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .title {
-            font-size: 24px;
-            color: #444444;
-            letter-spacing: 1px;
-            font-weight: normal;
-        }
-
-        /* 3. Heart Animation Styles */
-        .heart {
+        /* Main Video Background */
+        #bg-video {
             position: absolute;
-            color: #ff6b6b; /* Cute pink/red */
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        #main-content.visible #bg-video {
+            /* Animation: 0-1s fade in, 1-2.5s hold, 2.5-4.5s drop to 25% */
+            animation: videoIntro 4.5s ease-in-out forwards;
+        }
+
+        @keyframes videoIntro {
+            0% { opacity: 0; }
+            22% { opacity: 1; }
+            55% { opacity: 1; }
+            100% { opacity: 0.25; }
+        }
+
+        /* Top Left Vertical Text */
+        #vertical-text {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            color: #ffffff;
             font-size: 24px;
-            pointer-events: none; /* Let clicks pass through */
-            user-select: none;
-            animation: floatUp 0.8s ease-out forwards;
-            z-index: 9999; /* Ensure hearts are on top of everything */
+            letter-spacing: 6px;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            opacity: 0;
+            z-index: 10;
         }
 
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-50px) scale(1.5);
-                opacity: 0;
-            }
+        #main-content.visible #vertical-text {
+            animation: fadeInText 2s ease-in-out 3s forwards;
         }
 
-        /* Mobile Responsive: Stack layout */
+        @keyframes fadeInText {
+            to { opacity: 1; }
+        }
+
+        /* Center Hollow Floating Title */
+        #center-title {
+            position: absolute;
+            left: 50%;
+            top: -20%; /* Start above screen */
+            transform: translate(-50%, -50%);
+            font-size: 5vw;
+            font-weight: bold;
+            white-space: nowrap;
+            color: transparent; /* Hollow effect */
+            -webkit-text-stroke: 2px #ffffff; /* White outline */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        #main-content.visible #center-title {
+            /* Drop in at 3s, then float infinitely */
+            animation: 
+                dropIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) 3s forwards,
+                floatAnim 4s ease-in-out 4.5s infinite;
+        }
+
+        @keyframes dropIn {
+            0% { top: -20%; opacity: 0; }
+            100% { top: 50%; opacity: 1; }
+        }
+
+        @keyframes floatAnim {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -55%); }
+        }
+
+        /* Responsive tweaks */
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column; /* Top-Bottom on mobile */
-            }
-            .left-panel {
-                flex: 1; /* 50% height */
-                width: 100%;
-            }
-            .right-panel {
-                flex: 1; /* 50% height */
-                width: 100%;
-                padding: 20px 0;
-            }
-            .avatar {
-                width: 200px; /* Smaller image on mobile */
-                max-width: 80%;
-            }
-            .title {
-                font-size: 20px;
-            }
             #intro-overlay {
                 margin-right: 0;
                 justify-content: center;
@@ -199,11 +193,23 @@
             #intro-screen {
                 justify-content: center;
             }
+            #center-title {
+                font-size: 6vw;
+                white-space: normal;
+                text-align: center;
+                width: 90%;
+            }
+            #vertical-text {
+                top: 20px;
+                left: 20px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- ================= INTRO SCREEN ================= -->
     <div id="intro-screen">
         <video autoplay muted loop playsinline id="intro-video">
             <source src="website.mp4" type="video/mp4">
@@ -214,72 +220,42 @@
         </div>
     </div>
 
-    <div class="container" id="main-content">
-        <!-- LEFT: 3D Haru -->
-        <div class="left-panel">
-            <model-viewer 
-                src="haru_2test_web.glb" 
-                alt="3D Haru Model"
-                camera-controls 
-                ar
-                ar-modes="webxr scene-viewer quick-look"
-                shadow-intensity="1"
-                auto-rotate
-                camera-orbit="0deg 75deg auto" 
-                field-of-view="30deg">
-            </model-viewer>
-        </div>
+    <!-- ================= MAIN CONTENT ================= -->
+    <div id="main-content">
+        <!-- Center Video -->
+        <video id="bg-video" src="mainpreview.mp4" autoplay loop muted playsinline></video>
 
-        <!-- RIGHT: Mangolotis & 2D Haru -->
-        <div class="right-panel">
-            <img src="haru.png" alt="Cute Haru" class="avatar">
-            <div class="title">Mangolotis, Haru</div>
-        </div>
+        <!-- Vertical Text -->
+        <div id="vertical-text">MANGOLOTIS</div>
+
+        <!-- Center Hollow Title -->
+        <div id="center-title">MY NEW INDIEGAME PROGRESS</div>
     </div>
 
     <script>
-        // --- INTRO SCREEN LOGIC ---
+        // --- INTRO & TRANSITION LOGIC ---
         const introScreen = document.getElementById('intro-screen');
         const introOverlay = document.getElementById('intro-overlay');
         const mainContent = document.getElementById('main-content');
+        const mainVideo = document.getElementById('bg-video');
 
         // Fade in logo & text after a slight delay
         setTimeout(() => {
             introOverlay.classList.add('visible');
         }, 800);
 
-        // Click anywhere on intro screen to enter
+        // Click anywhere on intro screen to enter the new indie game page
         introScreen.addEventListener('click', () => {
             introScreen.classList.add('hidden'); // Fade out intro
+            
             setTimeout(() => {
-                introScreen.style.display = 'none'; // Remove from layout
-                mainContent.classList.add('visible'); // Fade in main content
+                introScreen.style.display = 'none'; // Remove intro from layout
+                mainContent.classList.add('visible'); // Fade in main content & trigger animations
+                
+                // Ensure main video plays from the start when revealed
+                mainVideo.currentTime = 0; 
+                mainVideo.play();
             }, 800); // Wait for fade out animation
-        });
-
-        // --- HEART ANIMATION LOGIC ---
-        // Heart Click Effect Logic
-        document.addEventListener('click', function(e) {
-            // Only spawn hearts if the intro screen is hidden
-            if (!introScreen.classList.contains('hidden')) return; 
-
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = '❤️'; 
-            
-            // Randomize position slightly around the click
-            const x = e.clientX;
-            const y = e.clientY;
-            
-            heart.style.left = x + 'px';
-            heart.style.top = y + 'px';
-            
-            document.body.appendChild(heart);
-
-            // Remove after animation completes (0.8s)
-            setTimeout(() => {
-                heart.remove();
-            }, 800);
         });
     </script>
 
