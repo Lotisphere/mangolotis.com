@@ -15,7 +15,7 @@
             height: 100%;
             background-color: #000000;
             font-family: 'Shippori Mincho', serif;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden; /* Prevent scrolling globally to protect intro */
         }
 
         /* ================= INTRO SCREEN ================= */
@@ -95,6 +95,9 @@
             pointer-events: none;
             transition: opacity 1s ease-in;
             z-index: 1;
+            overflow-y: auto; /* Enable vertical scrolling here */
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         #main-content.visible {
@@ -102,9 +105,17 @@
             pointer-events: auto;
         }
 
-        /* Main Video Background */
+        /* The First Screen / Hero Section inside main content */
+        #hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Takes exactly one full screen */
+            display: flex;
+        }
+
+        /* Main Video Background (Fixed so it stays while scrolling) */
         #bg-video {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             min-width: 100%;
@@ -114,7 +125,7 @@
             transform: translate(-50%, -50%);
             object-fit: cover;
             opacity: 0;
-            z-index: 1;
+            z-index: 0; /* Behind everything */
         }
 
         #main-content.visible #bg-video {
@@ -129,9 +140,9 @@
             100% { opacity: 0.25; }
         }
 
-        /* Top Left Vertical Text */
+        /* Top Left Vertical Text (Fixed so it stays while scrolling) */
         #vertical-text {
-            position: absolute;
+            position: fixed;
             top: 50px;
             left: 50px;
             color: #ffffff;
@@ -151,13 +162,13 @@
             to { opacity: 1; }
         }
 
-        /* Center Hollow Floating Title */
+        /* Center Hollow Floating Title (Scrolls with page) */
         #center-title {
             position: absolute;
-            left: 50%;
+            left: 7%; /* Anchored to left where 'M' originally started */
             top: -20%; /* Start above screen */
-            transform: translate(-50%, -50%);
-            font-size: 5vw;
+            transform: translateY(-50%);
+            font-size: 3.5vw; /* Shrink font size to approx 70% */
             white-space: nowrap;
             color: transparent; /* Hollow effect */
             -webkit-text-stroke: 1px #ffffff; /* Thinner white outline */
@@ -179,11 +190,11 @@
         }
 
         @keyframes floatAnim {
-            0%, 100% { transform: translate(-50%, -50%); }
-            50% { transform: translate(-50%, -55%); }
+            0%, 100% { transform: translateY(-50%); }
+            50% { transform: translateY(-55%); }
         }
 
-        /* Inventory Preview Video */
+        /* Inventory Preview Video (Scrolls with page) */
         #inventory-video {
             position: absolute;
             left: 10%; /* Middle-left positioning */
@@ -201,8 +212,125 @@
             animation: fadeInVideo 2s ease-in-out 4s forwards; /* Fades in after title drops */
         }
 
+        /* Gameplay Preview Video (Scrolls with page) */
+        #gameplay-video {
+            position: absolute;
+            left: 35%; /* Placed right next to the inventory video */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30%; /* Match inventory size */
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            z-index: 5; /* Appear above the right background video */
+        }
+
+        #main-content.visible #gameplay-video {
+            animation: fadeInVideo 2s ease-in-out 4.5s forwards; /* Fades in slightly after the first video for a staggered effect */
+        }
+
         @keyframes fadeInVideo {
             to { opacity: 1; }
+        }
+
+        /* Right Webm Video (Fixed so it stays while scrolling) */
+        #right-video {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 45%; /* Fills the right side of the screen */
+            object-fit: cover;
+            opacity: 0;
+            z-index: 4;
+            /* Optional: Make the left edge fade into the background smoothly */
+            mask-image: linear-gradient(to right, transparent 0%, black 20%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%);
+            pointer-events: none; /* Let clicks pass through to content behind it */
+        }
+
+        #main-content.visible #right-video {
+            animation: fadeInVideo 2s ease-in-out 4s forwards;
+        }
+
+        /* Example Placeholder for more scrollable content */
+        #scrollable-content-area {
+            position: relative;
+            width: 100%;
+            min-height: 100vh; /* Takes up another full screen */
+            z-index: 5;
+            padding: 100px 50px;
+            box-sizing: border-box;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .scroll-placeholder-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 50px;
+            width: 40%;
+            margin-left: 5%;
+        }
+
+        .scroll-placeholder-box h2 {
+            margin-top: 0;
+            font-size: 2vw;
+            letter-spacing: 2px;
+        }
+
+        .scroll-placeholder-box p {
+            line-height: 1.6;
+            color: #dddddd;
+        }
+
+        /* Album Showcase Styles */
+        .album-box {
+            width: 55%; /* Slightly wider to fit image + text */
+        }
+        .album-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 20px;
+            gap: 30px;
+        }
+        .album-cover {
+            width: 200px; /* Adjust size of album art */
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .album-cover:hover {
+            transform: scale(1.05); /* Enlarge on hover */
+        }
+        .album-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .album-text-main {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 20px;
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            line-height: 1.5;
+        }
+        .album-text-sub {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 15px;
+            color: #bbbbbb;
+            margin: 0;
+            line-height: 1.6;
         }
 
         /* Responsive tweaks */
@@ -214,16 +342,92 @@
             #intro-screen {
                 justify-content: center;
             }
-            #center-title {
-                font-size: 6vw;
-                white-space: normal;
-                text-align: center;
-                width: 90%;
+            #intro-logo {
+                width: 80vw;
             }
+            #intro-text {
+                font-size: 20px;
+            }
+
+            /* Main Content Adjustments */
             #vertical-text {
                 top: 20px;
-                left: 20px;
+                left: 10px;
+                font-size: 16px;
+                letter-spacing: 4px;
+            }
+            #center-title {
+                font-size: 8vw;
+                left: 15%;
+                white-space: normal;
+                text-align: left;
+                width: 80%;
+                top: 20%;
+            }
+            #main-content.visible #center-title {
+                animation: 
+                    dropInMobile 1.5s cubic-bezier(0.25, 1, 0.5, 1) 3s forwards,
+                    floatAnimMobile 4s ease-in-out 4.5s infinite;
+            }
+            
+            @keyframes dropInMobile {
+                0% { top: -20%; opacity: 0; }
+                100% { top: 15%; opacity: 1; }
+            }
+            @keyframes floatAnimMobile {
+                0%, 100% { transform: translateY(-50%); }
+                50% { transform: translateY(-55%); }
+            }
+
+            /* Stack Videos Vertically */
+            #inventory-video {
+                left: 50%;
+                top: 45%;
+                transform: translate(-50%, -50%);
+                width: 70%;
+            }
+            #gameplay-video {
+                left: 50%;
+                top: 75%;
+                transform: translate(-50%, -50%);
+                width: 70%;
+            }
+
+            /* Tone down the right ping-pong video to act as full background */
+            #right-video {
+                width: 100%;
+                opacity: 0.15 !important;
+                mask-image: none;
+                -webkit-mask-image: none;
+                z-index: 1; /* Place behind everything else */
+            }
+
+            /* Scrollable Area Adjustments */
+            #scrollable-content-area {
+                padding: 50px 20px;
+            }
+            .scroll-placeholder-box {
+                width: 90%;
+                margin: 0 auto 40px auto;
+                padding: 25px;
+            }
+            .album-box {
+                width: 90%;
+            }
+            .album-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            .album-cover {
+                width: 80%;
+                max-width: 250px;
+            }
+            .album-text-main {
                 font-size: 18px;
+            }
+            .album-text-sub {
+                font-size: 14px;
             }
         }
     </style>
@@ -243,22 +447,76 @@
 
     <!-- ================= MAIN CONTENT ================= -->
     <div id="main-content">
-        <!-- Center Video -->
+        <!-- Center Video (Fixed Background) -->
         <video id="bg-video" src="mainpreview.mp4" autoplay loop muted playsinline></video>
 
-        <!-- Vertical Text -->
+        <!-- Vertical Text (Fixed) -->
         <div id="vertical-text">MANGOLOTIS</div>
+        
+        <!-- Right Webm Video (Fixed, Fills Right Side, Ping-pong Loop via JS) -->
+        <video id="right-video" src="0001-1008.webm" autoplay muted playsinline></video>
 
-        <!-- Center Hollow Title -->
-        <div id="center-title">MY NEW INDIEGAME PROGRESS</div>
+        <!-- HERO SECTION (First screen of scroll) -->
+        <div id="hero-section">
+            <!-- Center Hollow Title -->
+            <div id="center-title">MY NEW INDIEGAME PROGRESS</div>
 
-        <!-- Inventory Preview Video (Left Middle) -->
-        <video id="inventory-video" src="inventory_preview.mp4" autoplay loop muted playsinline></video>
+            <!-- Inventory Preview Video (Left Middle) -->
+            <video id="inventory-video" src="inventory_preview.mp4" autoplay loop muted playsinline></video>
+
+            <!-- Gameplay Preview Video (Middle Right) -->
+            <video id="gameplay-video" src="gameplay-pre03.mp4" autoplay loop muted playsinline></video>
+        </div>
+
+        <!-- NEW SCROLLABLE CONTENT AREA -->
+        <div id="scrollable-content-area">
+            <div class="scroll-placeholder-box album-box">
+                <h2>LATEST UPDATES</h2>
+                
+                <!-- ALBUM SHOWCASE -->
+                <div class="album-container">
+                    <!-- Clicking this image redirects to the link in a new tab -->
+                    <a href="https://linkco.re/4PHfrVZc?lang=en" target="_blank" rel="noopener noreferrer">
+                        <img src="专辑_00000.png" alt="OST Album Cover" class="album-cover">
+                    </a>
+                    
+                    <div class="album-info">
+                        <p class="album-text-main">This album will serve as part of the OST for the new indiegame.</p>
+                        <p class="album-text-sub">The Sky, memories, and the melodies surging within now echoing. Look up, and this blue sky is always there, Echoes from Sisyphus.</p>
+                    </div>
+                </div>
+                <!-- END ALBUM SHOWCASE -->
+                
+            </div>
+            <!-- SECOND SECTION: MY PORTFOLIO -->
+            <div class="scroll-placeholder-box album-box">
+                <h2>MY PORTFOLIO</h2>
+                
+                <!-- PORTFOLIO SHOWCASE -->
+                <div class="album-container">
+                    <!-- Clicking this image redirects to the PDF file -->
+                    <a href="Portfolio-mangolotis.pdf" target="_blank" rel="noopener noreferrer">
+                        <img src="portfolio-icon.png" alt="My Portfolio" class="album-cover">
+                    </a>
+                    
+                    <div class="album-info">
+                        <p class="album-text-main">Natural lines, chaotic thoughts, fleeting moments captured in the gaps of everyday life - all of these shape the creative vision behind each of my works.</p>
+                    </div>
+                </div>
+                <!-- END PORTFOLIO SHOWCASE -->
+
+            </div>
+        </div>
     </div>
 
     <!-- Background Audio -->
     <audio id="bg-audio" loop>
         <source src="website_bgm.wav" type="audio/wav">
+    </audio>
+
+    <!-- Begin Sound Effect -->
+    <audio id="begin-sound">
+        <source src="BEGIN_sound.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -268,6 +526,34 @@
         const mainContent = document.getElementById('main-content');
         const mainVideo = document.getElementById('bg-video');
         const bgAudio = document.getElementById('bg-audio');
+        const beginSound = document.getElementById('begin-sound');
+        const rightVideo = document.getElementById('right-video');
+
+        // Ping-Pong Video Loop Logic (Play forward, then play backward)
+        let lastTime;
+        rightVideo.addEventListener('ended', () => {
+            // Video reached the end, start reversing
+            rightVideo.pause();
+            lastTime = Date.now();
+            requestAnimationFrame(reversePlay);
+        });
+
+        function reversePlay() {
+            const now = Date.now();
+            const delta = (now - lastTime) / 1000;
+            lastTime = now;
+            
+            let newTime = rightVideo.currentTime - (delta * 16); // Reverse slightly faster for smoother effect
+            
+            if (newTime <= 0) {
+                // Reached the beginning, play forward again
+                rightVideo.currentTime = 0;
+                rightVideo.play().catch(e => console.log("Right video playback blocked:", e));
+            } else {
+                rightVideo.currentTime = newTime;
+                requestAnimationFrame(reversePlay);
+            }
+        }
 
         // Fade in logo & text after a slight delay
         setTimeout(() => {
@@ -279,7 +565,11 @@
             introScreen.classList.add('hidden'); // Fade out intro
             
             // Play audio immediately upon user interaction
-            bgAudio.play().catch(e => console.log("Audio play blocked by browser:", e));
+            bgAudio.play().catch(e => console.log("BGM play blocked:", e));
+            
+            // Play begin sound effect
+            beginSound.currentTime = 0;
+            beginSound.play().catch(e => console.log("Begin sound play blocked:", e));
 
             setTimeout(() => {
                 introScreen.style.display = 'none'; // Remove intro from layout
