@@ -333,6 +333,59 @@
             line-height: 1.6;
         }
 
+        /* Elegant Follow Section */
+        .elegant-follow-section {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            display: flex;
+            flex-direction: column; /* Stack text and icons vertically */
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 100px;
+            overflow: hidden;
+            gap: 50px; /* Space between the text and the icons */
+        }
+        .huge-background-text {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 3vw; /* Balanced size for the title */
+            font-weight: normal; /* Normal weight for elegance */
+            color: rgba(255, 255, 255, 1); /* Solid white */
+            text-align: center;
+            letter-spacing: 4px; /* Slight tracking for elegance */
+            z-index: 1; 
+        }
+        .elegant-icons-container {
+            position: relative;
+            z-index: 2; 
+            display: flex;
+            gap: 40px; /* Space between icons */
+        }
+        .circle-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90px;
+            height: 90px;
+            background-color: #000000; /* Black background */
+            border: 2px solid rgba(255, 255, 255, 0.2); /* Original border outline */
+            border-radius: 50%; /* Perfect circle */
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+            cursor: pointer;
+        }
+        .circle-icon img {
+            width: 45px;
+            height: 45px;
+            transition: transform 0.3s ease;
+        }
+        .circle-icon:hover {
+            transform: scale(1.15) translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
         /* Responsive tweaks */
         @media (max-width: 768px) {
             #intro-overlay {
@@ -506,6 +559,29 @@
                 <!-- END PORTFOLIO SHOWCASE -->
 
             </div>
+
+            <!-- ELEGANT FOLLOW SECTION -->
+            <div class="elegant-follow-section">
+                <!-- Huge text floating behind (Layer 1) -->
+                <div class="huge-background-text">FOLLOW MY INDIE GAME DEVLOG</div>
+
+                <!-- Two circle icons sitting in front (Layer 2) -->
+                <div class="elegant-icons-container">
+                    <a href="https://x.com/MangoloKawaii" target="_blank" class="circle-icon">
+                        <img src="x-icon.svg" alt="X (Twitter)">
+                    </a>
+                    <a href="https://mangolotis.itch.io/" target="_blank" class="circle-icon">
+                        <img src="itch-icon.svg" alt="Itch.io">
+                    </a>
+                    <a href="https://www.linkedin.com/in/mango-lotis-03b319354/" target="_blank" class="circle-icon">
+                        <img src="linkedin-icon.svg" alt="LinkedIn">
+                    </a>
+                    <a href="https://medium.com/@mangolotis1" target="_blank" class="circle-icon">
+                        <img src="medium-icon.svg" alt="Medium">
+                    </a>
+                </div>
+            </div>
+            <!-- END ELEGANT FOLLOW SECTION -->
         </div>
     </div>
 
