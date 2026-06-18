@@ -50,6 +50,7 @@
 
         #intro-overlay {
             position: relative;
+            z-index: 20;
             margin-right: 4%; /* Push slightly left from the right edge */
             display: flex;
             flex-direction: column;
@@ -386,6 +387,33 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(255, 255, 255, 0.3);
         }
 
+        /* ================= INTRO HOVER SLIDE IMAGE ================= */
+        #intro-hover-zone {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 25%;
+            height: 100%;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        #intro-slide-image {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: auto;
+            height: 100%;
+            transform: translateX(100vw);
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #intro-slide-image.slide-in {
+            transform: translateX(0);
+        }
+
         /* Responsive tweaks */
         @media (max-width: 768px) {
             #intro-overlay {
@@ -400,6 +428,16 @@
             }
             #intro-text {
                 font-size: 20px;
+            }
+
+            /* Mobile: hide hover zone, image triggered by swipe */
+            #intro-hover-zone {
+                display: none;
+            }
+            #intro-slide-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
             /* Main Content Adjustments */
@@ -519,6 +557,11 @@
         <video autoplay muted loop playsinline id="intro-video">
             <source src="website.mp4" type="video/mp4">
         </video>
+        <!-- Hover zone: right 1/4 of intro screen -->
+        <div id="intro-hover-zone"></div>
+        <!-- Slide-in image: lands at left 1/4 -->
+        <img src="detsan_myalbum_website.png" alt="Album Preview" id="intro-slide-image">
+
         <div id="intro-overlay">
             <img src="mangolotis_white.png" alt="Mangolotis Logo" id="intro-logo">
             <div id="intro-text">Trying to Feel Alive</div>
@@ -674,25 +717,68 @@
             introOverlay.classList.add('visible');
         }, 800);
 
-        // Click anywhere on intro screen to enter the new indie game page
-        introScreen.addEventListener('click', () => {
-            introScreen.classList.add('hidden'); // Fade out intro
-            
-            // Play audio immediately upon user interaction
+        // --- Shared: enter main content ---
+        function enterMainContent() {
+            introScreen.classList.add('hidden');
             bgAudio.play().catch(e => console.log("BGM play blocked:", e));
-            
-            // Play begin sound effect
             beginSound.currentTime = 0;
             beginSound.play().catch(e => console.log("Begin sound play blocked:", e));
-
             setTimeout(() => {
-                introScreen.style.display = 'none'; // Remove intro from layout
-                mainContent.classList.add('visible'); // Fade in main content & trigger animations
-                
-                // Ensure main video plays from the start when revealed
-                mainVideo.currentTime = 0; 
+                introScreen.style.display = 'none';
+                mainContent.classList.add('visible');
+                mainVideo.currentTime = 0;
                 mainVideo.play();
-            }, 800); // Wait for fade out animation
+            }, 800);
+        }
+
+        // --- INTRO HOVER SLIDE IMAGE LOGIC (Desktop) ---
+        const introHoverZone = document.getElementById('intro-hover-zone');
+        const introSlideImage = document.getElementById('intro-slide-image');
+
+        introHoverZone.addEventListener('mouseenter', () => {
+            introSlideImage.classList.add('slide-in');
+        });
+
+        introHoverZone.addEventListener('mouseleave', () => {
+            introSlideImage.classList.remove('slide-in');
+        });
+
+        introSlideImage.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // --- MOBILE SWIPE LOGIC ---
+        let touchStartX = 0;
+        let swiped = false;
+        let mobileImageShowing = false;
+
+        introScreen.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            swiped = false;
+        }, { passive: true });
+
+        introScreen.addEventListener('touchend', (e) => {
+            const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+            if (deltaX > 40) {
+                // Horizontal swipe detected
+                swiped = true;
+                if (!mobileImageShowing) {
+                    introSlideImage.classList.add('slide-in');
+                    mobileImageShowing = true;
+                } else {
+                    introSlideImage.classList.remove('slide-in');
+                    mobileImageShowing = false;
+                }
+            }
+        }, { passive: true });
+
+        // Click / tap handler — skip if it was a swipe
+        introScreen.addEventListener('click', () => {
+            if (swiped) {
+                swiped = false;
+                return;
+            }
+            enterMainContent();
         });
     </script>
 
