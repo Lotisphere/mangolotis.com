@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimRoute</title>
+<meta name="description" content="GrimRoute — a real-time loot lookup overlay for Dark and Darker: hover an item to see farming routes, drop odds and live market quotes.">
+<style>
+/* ============ FONTS (local woff2, no external requests) ============ */
+@font-face{font-family:'KDG';src:url('assets/Kdg-Light-BIGyvz-1.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:'KDG';src:url('assets/Kdg-Medium-CMNGyKbf.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'NotoSansDnD';src:url('assets/NotoSans-Medium-t5Pygn2k.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'NotoSansDnD';src:url('assets/NotoSans-Bold-C3lbQq6C.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;}
+
+/* ============ BASE ============ */
+:root{
+  --amber:#E08F1F;
+  --amber-dim:#a86a17;
+  --card:#0b0b0b;
+  --muted:#bbbbbb;
+  --line:rgba(255,255,255,0.10);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;max-width:100%;overflow-x:hidden;}
+body{
+  background-color:#000;
+  background-image:url('assets/dotbg.webp');
+  background-repeat:repeat;
+  color:#e6e6e6;
+  font-family:'NotoSansDnD','Noto Sans',system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--amber);text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{
+  font-family:ui-monospace,Consolas,'Courier New',monospace;
+  font-size:0.92em;
+  background:rgba(224,143,31,0.12);
+  border:1px solid rgba(224,143,31,0.25);
+  border-radius:3px;
+  padding:1px 6px;
+  color:#f0c27a;
+  white-space:nowrap;
+}
+
+/* ============ NAV ============ */
+header.nav{
+  position:sticky;top:0;z-index:50;
+  background:#000;
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:1160px;margin:0 auto;
+  padding:0 16px;
+  height:64px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.wordmark{
+  font-family:'KDG',serif;font-weight:500;
+  font-size:22px;letter-spacing:3px;color:#fff;
+  text-decoration:none;white-space:nowrap;
+}
+.wordmark:hover{color:var(--amber);text-decoration:none;}
+.nav-right{display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:flex-end;}
+.nav-link{
+  font-family:'KDG',serif;font-weight:300;
+  font-size:14px;letter-spacing:1.5px;text-transform:uppercase;
+  color:#ddd;text-decoration:none;white-space:nowrap;
+}
+.nav-link:hover{color:var(--amber);text-decoration:none;}
+.lang-toggle{display:flex;align-items:center;border:1px solid var(--line);border-radius:2px;overflow:hidden;}
+.lang-toggle button{
+  font-family:'NotoSansDnD',sans-serif;font-size:12px;letter-spacing:1px;
+  background:transparent;color:#999;border:0;padding:5px 11px;cursor:pointer;line-height:1.4;
+}
+.lang-toggle button + button{border-left:1px solid var(--line);}
+.lang-toggle button:hover{color:#fff;}
+.lang-toggle button.active{background:var(--amber);color:#111;font-weight:700;}
+
+/* ============ HERO ============ */
+.hero{position:relative;width:100%;overflow:hidden;background:#000;}
+.hero img{display:block;width:100%;height:auto;}
+.hero .vignette{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,0.3) 52%, rgba(0,0,0,0.82) 80%, rgba(0,0,0,0.97) 100%),
+    radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 32%, rgba(0,0,0,0.78) 100%);
+}
+.hero-caption{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:0 16px 5vw 16px;
+  text-align:center;
+}
+.hero-caption h1{
+  font-family:'KDG',serif;font-weight:500;
+  font-size:clamp(20px,3.1vw,42px);
+  line-height:1.3;letter-spacing:1px;
+  margin:0 auto;max-width:1000px;
+  color:#fff;
+  text-shadow:0 2px 18px rgba(0,0,0,0.95),0 0 40px rgba(0,0,0,0.8);
+}
+.hero-caption .tag{
+  margin:12px 0 0;
+  font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--amber);
+  text-shadow:0 2px 10px rgba(0,0,0,0.95);
+}
+
+/* ============ MAIN / CARDS ============ */
+main{
+  background-image:linear-gradient(rgba(0,0,0,0.86),rgba(0,0,0,0.94)),url('assets/system_bg.webp');
+  background-size:cover;background-position:center top;background-attachment:scroll;
+  padding:56px 16px 24px;
+}
+.wrap{max-width:1000px;margin:0 auto;}
+.card{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-bottom:0;
+  padding:38px 34px 34px;
+  margin:0 0 46px;
+  scroll-margin-top:80px;
+}
+.card::after{
+  content:"";
+  position:absolute;left:0;right:0;bottom:-14px;height:15px;
+  background:url('assets/frame-border-bottom.svg') no-repeat center bottom;
+  background-size:100% 100%;
+  pointer-events:none;
+}
+.card h2{
+  font-family:'KDG',serif;font-weight:500;
+  color:var(--amber);
+  font-size:clamp(20px,2.2vw,28px);
+  letter-spacing:2px;text-transform:uppercase;
+  margin:0 0 4px;
+}
+.card .kicker{
+  margin:0;color:var(--muted);font-size:13px;letter-spacing:2px;text-transform:uppercase;
+}
+.divider{
+  display:block;width:100%;max-width:633px;height:34px;margin:18px 0 26px;
+  background:url('assets/hr.png') no-repeat left center;
+  background-size:contain;
+}
+.card p{margin:0 0 16px;}
+.card .sub{color:var(--muted);font-size:15px;}
+ul.feat{list-style:none;margin:0;padding:0;}
+ul.feat li{position:relative;padding-left:22px;margin:0 0 16px;}
+ul.feat li::before{
+  content:"";position:absolute;left:2px;top:11px;
+  width:7px;height:7px;background:var(--amber);transform:rotate(45deg);
+}
+ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;}
+ol.steps li{position:relative;counter-increment:s;padding-left:42px;margin:0 0 18px;}
+ol.steps li::before{
+  content:counter(s,decimal-leading-zero);
+  position:absolute;left:0;top:0;
+  font-family:'KDG',serif;font-weight:500;font-size:15px;
+  color:var(--amber);border:1px solid rgba(224,143,31,0.45);
+  width:27px;height:27px;display:flex;align-items:center;justify-content:center;
+}
+.hotkeys{
+  margin-top:24px;border-top:1px solid var(--line);padding-top:20px;
+  color:var(--muted);font-size:15px;
+}
+.hotkeys p{margin:0 0 10px;}
+.hotkeys p:last-child{margin-bottom:0;}
+
+/* ============ DOWNLOAD ============ */
+.dl-row{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+.dl-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:11px;
+  width:306px;height:73px;
+  background:url('assets/yellow-sm-btn.svg') no-repeat center center;
+  background-size:100% 100%;
+  font-family:'KDG',serif;font-weight:500;font-size:16px;letter-spacing:1.2px;
+  color:#ffe7bc;text-decoration:none;text-shadow:0 1px 3px rgba(0,0,0,0.9);
+  transition:transform .2s ease,filter .2s ease;
+}
+.dl-btn:hover{transform:translateY(-2px);filter:brightness(1.1);text-decoration:none;}
+.dl-btn svg{width:22px;height:22px;flex:0 0 auto;}
+.dl-note{color:var(--muted);font-size:14px;letter-spacing:1px;}
+
+/* ============ FOOTER ============ */
+footer{
+  background:#000;border-top:1px solid var(--line);
+  padding:38px 16px 54px;
+}
+footer .wrap{max-width:1000px;}
+footer p{margin:0 0 12px;color:#8e8e8e;font-size:13px;line-height:1.85;}
+footer a{color:#b8b8b8;}
+footer a:hover{color:var(--amber);}
+.back-link{
+  display:inline-block;margin-top:14px;
+  font-family:'KDG',serif;font-size:14px;letter-spacing:2px;color:var(--amber);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:768px){
+  body{font-size:15px;}
+  .nav-inner{height:auto;padding:12px 16px;flex-wrap:wrap;gap:10px;}
+  .wordmark{font-size:19px;}
+  .nav-right{gap:14px;width:100%;justify-content:flex-start;}
+  .nav-link{font-size:12px;letter-spacing:1px;}
+  .hero-caption{position:static;padding:0;background:#000;}
+  .hero-caption h1{font-size:21px;padding:22px 16px 0;}
+  .hero-caption .tag{padding:0 16px 22px;margin-top:8px;}
+  .hero .vignette{background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0) 40%,rgba(0,0,0,0.65) 100%);}
+  main{padding:34px 16px 16px;}
+  .card{padding:26px 18px 24px;margin-bottom:40px;}
+  .divider{height:24px;margin:14px 0 20px;}
+  .dl-row{gap:18px;}
+  .dl-btn{width:100%;max-width:306px;height:66px;font-size:15px;}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="../">GRIMROUTE</a>
+    <nav class="nav-right">
+      <a class="nav-link" href="#overview" data-i18n="nav1">Overview</a>
+      <a class="nav-link" href="#howto" data-i18n="nav2">How to use</a>
+      <a class="nav-link" href="#download" data-i18n="nav3">Download</a>
+      <span class="lang-toggle">
+        <button type="button" id="btn-en" onclick="setLang('en')">EN</button>
+        <button type="button" id="btn-zh" onclick="setLang('zh')">中</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <img src="../grimroute_icon.jpg" alt="GrimRoute — Dark and Darker loot lookup overlay">
+  <div class="vignette"></div>
+  <div class="hero-caption">
+    <h1 data-i18n="heroTitle">GrimRoute — real-time loot lookup for Dark and Darker</h1>
+    <p class="tag" data-i18n="heroTag">Hover an item. Know where it drops, how often, and what it sells for.</p>
+  </div>
+</section>
+
+<main>
+  <div class="wrap">
+
+    <!-- 1. WHAT IT DOES -->
+    <section class="card" id="overview">
+      <h2 data-i18n="c1Title">What it does</h2>
+      <p class="kicker" data-i18n="c1Kicker">Overview</p>
+      <span class="divider"></span>
+      <ul class="feat">
+        <li data-i18n="c1a">Hover an item in game and a card attaches beside the tooltip — no clicking, no alt-tab, no reading your memory or injecting into the game.</li>
+        <li data-i18n="c1b">Route table: where to farm the item, what to kill or which container to open, and the expected number of attempts.</li>
+        <li data-i18n="c1c">Live market quotes, plus a price estimate computed from the rolls on the item you are actually looking at — with a 0–100 roll score.</li>
+        <li data-i18n="c1d">A patch gate detects game updates, compares game / database / cache versions, and syncs the data set for the current build.</li>
+      </ul>
+    </section>
+
+    <!-- 2. HOW TO USE -->
+    <section class="card" id="howto">
+      <h2 data-i18n="c2Title">How to use</h2>
+      <p class="kicker" data-i18n="c2Kicker">Four steps</p>
+      <span class="divider"></span>
+      <ol class="steps">
+        <li data-i18n="c2s1">Download the archive and unzip it anywhere.</li>
+        <li data-i18n="c2s2">Put your DarkerDB API key — one line, no spaces — into <code>data\api_key.txt</code>. <a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">Get a key</a>.</li>
+        <li data-i18n="c2s3">Run <code>grimroute-overlay.exe</code>, and set the game to borderless windowed.</li>
+        <li data-i18n="c2s4">Open the console <b>DATA</b> tab and hit <b>Sync now</b> — also after every game patch.</li>
+      </ol>
+      <div class="hotkeys">
+        <p data-i18n="c2h1"><code>Ctrl+Shift+H</code> — toggle hover recognition on / off.</p>
+        <p data-i18n="c2h2"><code>Ctrl+Shift+R</code> — open the interactive panel (ROUTES | MARKET); <code>Esc</code> closes it.</p>
+      </div>
+    </section>
+
+    <!-- 3. DOWNLOAD -->
+    <section class="card" id="download">
+      <h2 data-i18n="c3Title">Download</h2>
+      <p class="kicker" data-i18n="c3Kicker">Latest release</p>
+      <span class="divider"></span>
+      <div class="dl-row">
+        <a class="dl-btn" href="https://github.com/Lotisphere/grimroute/releases/latest" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="#ffffff" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span data-i18n="c3Btn">Download on GitHub</span>
+        </a>
+        <span class="dl-note" data-i18n="c3Note">Windows 10/11 · Free · Beta</span>
+      </div>
+      <p class="sub" style="margin-top:26px" data-i18n="c3Sub">The archive ships without a cache database — the first sync fills it with your own API key, which takes one to three minutes.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n="f1">Artwork, fonts and UI ornaments © IRONMACE Co., Ltd., from the official site <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>. GrimRoute is a fan-made tool and is not affiliated with or endorsed by IRONMACE.</p>
+    <p data-i18n="f2">Data: DarkerDB API, darkloot.net.</p>
+    <a class="back-link" href="../">← mangolotis.com</a>
+  </div>
+</footer>
+
+<script>
+var I18N = {
+  en: {
+    nav1:"Overview", nav2:"How to use", nav3:"Download",
+    heroTitle:"GrimRoute — real-time loot lookup for Dark and Darker",
+    heroTag:"Hover an item. Know where it drops, how often, and what it sells for.",
+    c1Title:"What it does", c1Kicker:"Overview",
+    c1a:"Hover an item in game and a card attaches beside the tooltip — no clicking, no alt-tab, no reading your memory or injecting into the game.",
+    c1b:"Route table: where to farm the item, what to kill or which container to open, and the expected number of attempts.",
+    c1c:"Live market quotes, plus a price estimate computed from the rolls on the item you are actually looking at — with a 0–100 roll score.",
+    c1d:"A patch gate detects game updates, compares game / database / cache versions, and syncs the data set for the current build.",
+    c2Title:"How to use", c2Kicker:"Four steps",
+    c2s1:"Download the archive and unzip it anywhere.",
+    c2s2:'Put your DarkerDB API key — one line, no spaces — into <code>data\\api_key.txt</code>. <a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">Get a key</a>.',
+    c2s3:"Run <code>grimroute-overlay.exe</code>, and set the game to borderless windowed.",
+    c2s4:"Open the console <b>DATA</b> tab and hit <b>Sync now</b> — also after every game patch.",
+    c2h1:"<code>Ctrl+Shift+H</code> — toggle hover recognition on / off.",
+    c2h2:"<code>Ctrl+Shift+R</code> — open the interactive panel (ROUTES | MARKET); <code>Esc</code> closes it.",
+    c3Title:"Download", c3Kicker:"Latest release",
+    c3Btn:"Download on GitHub", c3Note:"Windows 10/11 · Free · Beta",
+    c3Sub:"The archive ships without a cache database — the first sync fills it with your own API key, which takes one to three minutes.",
+    f1:'Artwork, fonts and UI ornaments © IRONMACE Co., Ltd., from the official site <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>. GrimRoute is a fan-made tool and is not affiliated with or endorsed by IRONMACE.',
+    f2:"Data: DarkerDB API, darkloot.net."
+  },
+  zh: {
+    nav1:"功能", nav2:"使用方法", nav3:"下载",
+    heroTitle:"GrimRoute — Dark and Darker 实时掉落物查询器",
+    heroTag:"悬停一件装备，立刻知道它从哪掉、掉率多少、值多少金。",
+    c1Title:"功能", c1Kicker:"概览",
+    c1a:"游戏里悬停装备，卡片自动贴在 tooltip 旁边——不用点击、不用切出游戏；只读屏，不注入、不读内存。",
+    c1b:"路线表：去哪刷、打什么怪或开什么容器、期望多少次。",
+    c1c:"实时市场报价，并按你正在看的这件装备的词条给出预估价，附 0–100 词条评分。",
+    c1d:"补丁闸门自动检测游戏更新，对照 游戏 / 数据库 / 缓存 三方版本，把数据同步到当前补丁。",
+    c2Title:"使用方法", c2Kicker:"四步",
+    c2s1:"下载压缩包，解压到任意目录。",
+    c2s2:'把 DarkerDB API key（一行、无空格）写入 <code>data\\api_key.txt</code>。<a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">申请 key</a>。',
+    c2s3:"运行 <code>grimroute-overlay.exe</code>，并把游戏设为无边框窗口化。",
+    c2s4:"打开控制台「<b>数据</b>」页，点「<b>立即同步</b>」；每次游戏更新后同样操作。",
+    c2h1:"<code>Ctrl+Shift+H</code> — 开关悬停识别。",
+    c2h2:"<code>Ctrl+Shift+R</code> — 打开可交互面板（路线 | 市场）；<code>Esc</code> 关闭。",
+    c3Title:"下载", c3Kicker:"最新版本",
+    c3Btn:"在 GitHub 下载", c3Note:"Windows 10/11 · 免费 · Beta",
+    c3Sub:"压缩包不含缓存库——首次同步会用你自己的 API key 填充，约 1～3 分钟。",
+    f1:'插画、字体与界面装饰 © IRONMACE Co., Ltd.，取自官方网站 <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>。GrimRoute 是粉丝自制工具，与 IRONMACE 无隶属关系，也未获其认可。',
+    f2:"数据来源：DarkerDB API、darkloot.net。"
+  }
+};
+
+function setLang(lang){
+  if(!I18N[lang]){ lang = 'en'; }
+  var dict = I18N[lang];
+  var nodes = document.querySelectorAll('[data-i18n]');
+  for(var i=0;i<nodes.length;i++){
+    var key = nodes[i].getAttribute('data-i18n');
+    if(dict[key] !== undefined){ nodes[i].innerHTML = dict[key]; }
+  }
+  document.documentElement.lang = (lang === 'zh') ? 'zh-Hans' : 'en';
+  document.getElementById('btn-en').className = (lang === 'en') ? 'active' : '';
+  document.getElementById('btn-zh').className = (lang === 'zh') ? 'active' : '';
+  try { localStorage.setItem('grimroute-lang', lang); } catch(e){}
+}
+
+(function(){
+  var saved = 'en';
+  try { saved = localStorage.getItem('grimroute-lang') || 'en'; } catch(e){ saved = 'en'; }
+  setLang(saved);
+})();
+</script>
+
+</body>
+</html>
