@@ -287,6 +287,18 @@
             letter-spacing: 2px;
         }
 
+        /* Sub-heading under a section title: same voice as .album-text-sub,
+           pulled up to the h2 so the h2 -> sub -> content rhythm is identical
+           for every section. */
+        .section-sub {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 15px;
+            color: #bbbbbb;
+            margin: -8px 0 0 0;
+            line-height: 1.6;
+            letter-spacing: 1px;
+        }
+
         .scroll-placeholder-box p {
             line-height: 1.6;
             color: #dddddd;
@@ -614,6 +626,7 @@
             <!-- SECOND SECTION: MY PORTFOLIO -->
             <div class="scroll-placeholder-box album-box">
                 <h2>MY PORTFOLIO</h2>
+                <p class="section-sub">Works up to 2025</p>
                 
                 <!-- PORTFOLIO SHOWCASE -->
                 <div class="album-container">
@@ -628,7 +641,8 @@
                 </div>
                 <!-- END PORTFOLIO SHOWCASE -->
                 
-                <h2 style="margin-top: 60px;">prediction engine DEV</h2>
+                <h2 style="margin-top: 60px;">PREDICTION ENGINE DEV</h2>
+                <p class="section-sub">Predict everything</p>
                 <div class="album-container">
                     <a href="https://github.com/lotisphere/harufishing" target="_blank" rel="noopener noreferrer">
                         <img src="harufishing_webfront.png" alt="Prediction Engine DEV" class="album-cover">
@@ -640,7 +654,7 @@
                 </div>
 
                 <h2 style="margin-top: 60px;">GRIMROUTE</h2>
-                <p class="album-text-sub">For Dark and Darker</p>
+                <p class="section-sub">For Dark and Darker</p>
                 <div class="album-container">
                     <a href="grimroute/">
                         <img src="grimroute_icon.jpg" alt="GrimRoute for Dark and Darker" class="album-cover">
