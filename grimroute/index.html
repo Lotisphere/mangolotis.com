@@ -85,17 +85,18 @@ header.nav{
 .hero .vignette{
   position:absolute;inset:0;pointer-events:none;
   background:
-    linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,0.3) 52%, rgba(0,0,0,0.82) 80%, rgba(0,0,0,0.97) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.85) 100%),
     radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 32%, rgba(0,0,0,0.78) 100%);
 }
 .hero-caption{
-  position:absolute;left:0;right:0;bottom:0;
-  padding:0 16px 5vw 16px;
+  position:relative;
+  padding:30px 16px 46px;
   text-align:center;
+  background:#000;
 }
 .hero-caption h1{
   font-family:'KDG',serif;font-weight:500;
-  font-size:clamp(20px,3.1vw,42px);
+  font-size:clamp(19px,2.2vw,30px);
   line-height:1.3;letter-spacing:1px;
   margin:0 auto;max-width:1000px;
   color:#fff;
@@ -132,6 +133,7 @@ main{
   pointer-events:none;
 }
 .card h2{
+  text-align:center;
   font-family:'KDG',serif;font-weight:500;
   color:var(--amber);
   font-size:clamp(20px,2.2vw,28px);
@@ -139,11 +141,12 @@ main{
   margin:0 0 4px;
 }
 .card .kicker{
+  text-align:center;
   margin:0;color:var(--muted);font-size:13px;letter-spacing:2px;text-transform:uppercase;
 }
 .divider{
-  display:block;width:100%;max-width:633px;height:34px;margin:18px 0 26px;
-  background:url('assets/hr.png') no-repeat left center;
+  display:block;width:100%;max-width:633px;height:34px;margin:18px auto 26px;
+  background:url('assets/hr.png') no-repeat center center;
   background-size:contain;
 }
 .card p{margin:0 0 16px;}
@@ -172,7 +175,7 @@ ol.steps li::before{
 .hotkeys code{margin-right:8px;}
 
 /* ============ DOWNLOAD ============ */
-.dl-opts{display:flex;flex-wrap:wrap;gap:22px 40px;}
+.dl-opts{display:flex;flex-wrap:wrap;gap:22px 40px;justify-content:center;}
 .dl-opt{display:flex;flex-direction:column;align-items:center;width:306px;max-width:100%;}
 .dl-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:11px;
@@ -186,8 +189,10 @@ ol.steps li::before{
 .dl-btn:hover{transform:translateY(-2px);filter:brightness(1.1);text-decoration:none;}
 .dl-btn svg{width:22px;height:22px;flex:0 0 auto;}
 .dl-cap{margin-top:6px;color:var(--muted);font-size:14px;text-align:center;line-height:1.5;}
-.card .dl-pick{margin:28px 0 4px;}
-.card .dl-meta{margin:0;color:var(--muted);font-size:14px;letter-spacing:1px;}
+.card .dl-pick{margin:28px 0 4px;text-align:center;}
+#download .sub{text-align:center;max-width:720px;margin-left:auto;margin-right:auto;}
+.hero-cta{display:inline-flex;margin-top:22px;width:260px;max-width:100%;}
+.card .dl-meta{margin:0;color:var(--muted);font-size:14px;letter-spacing:1px;text-align:center;}
 
 /* ============ FOOTER ============ */
 footer{
@@ -210,7 +215,7 @@ footer a:hover{color:var(--amber);}
   .wordmark{font-size:19px;}
   .nav-right{gap:14px;width:100%;justify-content:flex-start;}
   .nav-link{font-size:12px;letter-spacing:1px;}
-  .hero-caption{position:static;padding:0;background:#000;}
+  .hero-caption{padding:0 0 30px;}
   .hero-caption h1{font-size:21px;padding:22px 16px 0;}
   .hero-caption .tag{padding:0 16px 22px;margin-top:8px;}
   .hero .vignette{background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0) 40%,rgba(0,0,0,0.65) 100%);}
@@ -247,6 +252,7 @@ footer a:hover{color:var(--amber);}
   <div class="hero-caption">
     <h1 data-i18n="heroTitle">GrimRoute: loot lookup for Dark and Darker</h1>
     <p class="tag" data-i18n="heroTag">Hover an item to see where it drops and what it sells for.</p>
+    <a class="dl-btn hero-cta" href="#download" data-i18n="nav3">Download</a>
   </div>
 </section>
 
