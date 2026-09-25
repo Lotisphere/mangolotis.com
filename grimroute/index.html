@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrimRoute</title>
-<meta name="description" content="GrimRoute — a real-time loot lookup overlay for Dark and Darker: hover an item to see farming routes, drop odds and live market quotes.">
+<meta name="description" content="GrimRoute: a loot lookup overlay for Dark and Darker. Hover an item to see where it drops, what to kill or open, how many tries, and what it sells for.">
 <style>
 /* ============ FONTS (local woff2, no external requests) ============ */
 @font-face{font-family:'KDG';src:url('assets/Kdg-Light-BIGyvz-1.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap;}
@@ -169,12 +169,14 @@ ol.steps li::before{
 }
 .hotkeys p{margin:0 0 10px;}
 .hotkeys p:last-child{margin-bottom:0;}
+.hotkeys code{margin-right:8px;}
 
 /* ============ DOWNLOAD ============ */
-.dl-row{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+.dl-opts{display:flex;flex-wrap:wrap;gap:22px 40px;}
+.dl-opt{display:flex;flex-direction:column;align-items:center;width:306px;max-width:100%;}
 .dl-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:11px;
-  width:306px;height:73px;
+  width:306px;max-width:100%;height:73px;
   background:url('assets/yellow-sm-btn.svg') no-repeat center center;
   background-size:100% 100%;
   font-family:'KDG',serif;font-weight:500;font-size:16px;letter-spacing:1.2px;
@@ -183,7 +185,9 @@ ol.steps li::before{
 }
 .dl-btn:hover{transform:translateY(-2px);filter:brightness(1.1);text-decoration:none;}
 .dl-btn svg{width:22px;height:22px;flex:0 0 auto;}
-.dl-note{color:var(--muted);font-size:14px;letter-spacing:1px;}
+.dl-cap{margin-top:6px;color:var(--muted);font-size:14px;text-align:center;line-height:1.5;}
+.card .dl-pick{margin:28px 0 4px;}
+.card .dl-meta{margin:0;color:var(--muted);font-size:14px;letter-spacing:1px;}
 
 /* ============ FOOTER ============ */
 footer{
@@ -213,8 +217,10 @@ footer a:hover{color:var(--amber);}
   main{padding:34px 16px 16px;}
   .card{padding:26px 18px 24px;margin-bottom:40px;}
   .divider{height:24px;margin:14px 0 20px;}
-  .dl-row{gap:18px;}
-  .dl-btn{width:100%;max-width:306px;height:66px;font-size:15px;}
+  .dl-opts{flex-direction:column;align-items:center;gap:18px;}
+  .dl-opt{width:100%;max-width:306px;}
+  .dl-btn{height:66px;font-size:15px;}
+  .hotkeys code{white-space:nowrap;}
 }
 </style>
 </head>
@@ -224,8 +230,8 @@ footer a:hover{color:var(--amber);}
   <div class="nav-inner">
     <a class="wordmark" href="../">GRIMROUTE</a>
     <nav class="nav-right">
-      <a class="nav-link" href="#overview" data-i18n="nav1">Overview</a>
-      <a class="nav-link" href="#howto" data-i18n="nav2">How to use</a>
+      <a class="nav-link" href="#overview" data-i18n="nav1">Features</a>
+      <a class="nav-link" href="#howto" data-i18n="nav2">Setup</a>
       <a class="nav-link" href="#download" data-i18n="nav3">Download</a>
       <span class="lang-toggle">
         <button type="button" id="btn-en" onclick="setLang('en')">EN</button>
@@ -236,11 +242,11 @@ footer a:hover{color:var(--amber);}
 </header>
 
 <section class="hero">
-  <img src="../grimroute_icon.jpg" alt="GrimRoute — Dark and Darker loot lookup overlay">
+  <img src="../grimroute_icon.jpg" alt="GrimRoute, a loot lookup overlay for Dark and Darker">
   <div class="vignette"></div>
   <div class="hero-caption">
-    <h1 data-i18n="heroTitle">GrimRoute — real-time loot lookup for Dark and Darker</h1>
-    <p class="tag" data-i18n="heroTag">Hover an item. Know where it drops, how often, and what it sells for.</p>
+    <h1 data-i18n="heroTitle">GrimRoute: loot lookup for Dark and Darker</h1>
+    <p class="tag" data-i18n="heroTag">Hover an item to see where it drops and what it sells for.</p>
   </div>
 </section>
 
@@ -250,13 +256,15 @@ footer a:hover{color:var(--amber);}
     <!-- 1. WHAT IT DOES -->
     <section class="card" id="overview">
       <h2 data-i18n="c1Title">What it does</h2>
-      <p class="kicker" data-i18n="c1Kicker">Overview</p>
+      <p class="kicker" data-i18n="c1Kicker">Features</p>
       <span class="divider"></span>
       <ul class="feat">
-        <li data-i18n="c1a">Hover an item in game and a card attaches beside the tooltip — no clicking, no alt-tab, no reading your memory or injecting into the game.</li>
-        <li data-i18n="c1b">Route table: where to farm the item, what to kill or which container to open, and the expected number of attempts.</li>
-        <li data-i18n="c1c">Live market quotes, plus a price estimate computed from the rolls on the item you are actually looking at — with a 0–100 roll score.</li>
-        <li data-i18n="c1d">A patch gate detects game updates, compares game / database / cache versions, and syncs the data set for the current build.</li>
+        <li data-i18n="c1a">Hover an item in game and a card appears next to the tooltip. It tells you where the item drops, which monster to kill or which container to open, and about how many tries it takes.</li>
+        <li data-i18n="c1b">Market price from DarkerDB, plus an estimate for the rolls on the item you are looking at, with a 0 to 100 roll score.</li>
+        <li data-i18n="c1c">Stash sort. Open your stash in the lobby and press <code>Ctrl+Shift+S</code> to preview the new layout, then press <code>Enter</code> in game and it moves the items for you. Lobby only, it never runs in a raid.</li>
+        <li data-i18n="c1d">Network HUD. A small readout of your ping to the game server. <code>Ctrl+Shift+N</code> shows or hides it.</li>
+        <li data-i18n="c1e">Auto-update. When a new version is out it asks you first, then downloads only the files that changed. Your key and data are left alone.</li>
+        <li data-i18n="c1f">It only reads the screen. It does not read game memory or inject anything into the game.</li>
       </ul>
     </section>
 
@@ -266,30 +274,43 @@ footer a:hover{color:var(--amber);}
       <p class="kicker" data-i18n="c2Kicker">Four steps</p>
       <span class="divider"></span>
       <ol class="steps">
-        <li data-i18n="c2s1">Download the archive and unzip it anywhere.</li>
-        <li data-i18n="c2s2">Put your DarkerDB API key — one line, no spaces — into <code>data\api_key.txt</code>. <a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">Get a key</a>.</li>
-        <li data-i18n="c2s3">Run <code>grimroute-overlay.exe</code>, and set the game to borderless windowed.</li>
-        <li data-i18n="c2s4">Open the console <b>DATA</b> tab and hit <b>Sync now</b> — also after every game patch.</li>
+        <li data-i18n="c2s1">Install. China mirror: run <code>grimroute-setup.exe</code> and pick a folder. GitHub: unzip the zip anywhere. Don't use Program Files, the updater needs to write to that folder.</li>
+        <li data-i18n="c2s2">Paste your DarkerDB API key into <code>data\api_key.txt</code> in that folder. One line, no spaces. <a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">Get a key here</a>.</li>
+        <li data-i18n="c2s3">Set the game to borderless windowed, then run <code>grimroute-overlay.exe</code>.</li>
+        <li data-i18n="c2s4">In the console, open the <b>DATA</b> tab and click <b>Sync now</b>. The first sync takes 1 to 3 minutes. Sync again after each game patch.</li>
       </ol>
       <div class="hotkeys">
-        <p data-i18n="c2h1"><code>Ctrl+Shift+H</code> — toggle hover recognition on / off.</p>
-        <p data-i18n="c2h2"><code>Ctrl+Shift+R</code> — open the interactive panel (ROUTES | MARKET); <code>Esc</code> closes it.</p>
+        <p data-i18n="c2h1"><code>Ctrl+Shift+H</code> hover lookup on or off</p>
+        <p data-i18n="c2h2"><code>Ctrl+Shift+R</code> routes and market panel, <code>Esc</code> closes it</p>
+        <p data-i18n="c2h3"><code>Ctrl+Shift+S</code> stash sort preview, <code>Enter</code> in game to start, <code>Esc</code> to stop</p>
+        <p data-i18n="c2h4"><code>Ctrl+Shift+N</code> network HUD on or off</p>
       </div>
     </section>
 
     <!-- 3. DOWNLOAD -->
     <section class="card" id="download">
       <h2 data-i18n="c3Title">Download</h2>
-      <p class="kicker" data-i18n="c3Kicker">Latest release</p>
+      <p class="kicker" data-i18n="c3Kicker">Latest version</p>
       <span class="divider"></span>
-      <div class="dl-row">
-        <a class="dl-btn" href="https://github.com/Lotisphere/grimroute/releases/latest" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="#ffffff" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-          <span data-i18n="c3Btn">Download on GitHub</span>
-        </a>
-        <span class="dl-note" data-i18n="c3Note">Windows 10/11 · Free · Beta</span>
+      <div class="dl-opts">
+        <div class="dl-opt">
+          <a class="dl-btn" href="https://github.com/Lotisphere/grimroute/releases/latest" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="#ffffff" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span data-i18n="c3BtnGh">Download from GitHub</span>
+          </a>
+          <span class="dl-cap" data-i18n="c3CapGh">Full zip, for players outside mainland China</span>
+        </div>
+        <div class="dl-opt">
+          <a class="dl-btn" href="https://dl.mangolotis.com/grimroute-setup.exe">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M12 3v12M6.5 9.5 12 15l5.5-5.5M4 17.5V21h16v-3.5" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="c3BtnCn">China mirror</span>
+          </a>
+          <span class="dl-cap" data-i18n="c3CapCn">Online installer, about 1 MB</span>
+        </div>
       </div>
-      <p class="sub" style="margin-top:26px" data-i18n="c3Sub">The archive ships without a cache database — the first sync fills it with your own API key, which takes one to three minutes.</p>
+      <p class="dl-pick" data-i18n="c3Pick">In mainland China, use the China mirror. Anywhere else, either one works. After install, the tool updates itself.</p>
+      <p class="dl-meta" data-i18n="c3Meta">Windows 10/11 · Free</p>
+      <p class="sub" style="margin-top:22px" data-i18n="c3Sub">Neither download comes with the cache database. Your first sync builds it with your own API key. If you are on 0.6 or older, download the new version by hand once. From 0.7 on it updates itself.</p>
     </section>
 
   </div>
@@ -297,8 +318,8 @@ footer a:hover{color:var(--amber);}
 
 <footer>
   <div class="wrap">
-    <p data-i18n="f1">Artwork, fonts and UI ornaments © IRONMACE Co., Ltd., from the official site <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>. GrimRoute is a fan-made tool and is not affiliated with or endorsed by IRONMACE.</p>
-    <p data-i18n="f2">Data: DarkerDB API, darkloot.net.</p>
+    <p data-i18n="f1">Artwork, fonts and UI ornaments are © IRONMACE Co., Ltd., taken from <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>. GrimRoute is made by a player. It is not affiliated with or endorsed by IRONMACE.</p>
+    <p data-i18n="f2">Data: DarkerDB API and darkloot.net.</p>
     <a class="back-link" href="../">← mangolotis.com</a>
   </div>
 </footer>
@@ -306,48 +327,62 @@ footer a:hover{color:var(--amber);}
 <script>
 var I18N = {
   en: {
-    nav1:"Overview", nav2:"How to use", nav3:"Download",
-    heroTitle:"GrimRoute — real-time loot lookup for Dark and Darker",
-    heroTag:"Hover an item. Know where it drops, how often, and what it sells for.",
-    c1Title:"What it does", c1Kicker:"Overview",
-    c1a:"Hover an item in game and a card attaches beside the tooltip — no clicking, no alt-tab, no reading your memory or injecting into the game.",
-    c1b:"Route table: where to farm the item, what to kill or which container to open, and the expected number of attempts.",
-    c1c:"Live market quotes, plus a price estimate computed from the rolls on the item you are actually looking at — with a 0–100 roll score.",
-    c1d:"A patch gate detects game updates, compares game / database / cache versions, and syncs the data set for the current build.",
+    nav1:"Features", nav2:"Setup", nav3:"Download",
+    heroTitle:"GrimRoute: loot lookup for Dark and Darker",
+    heroTag:"Hover an item to see where it drops and what it sells for.",
+    c1Title:"What it does", c1Kicker:"Features",
+    c1a:"Hover an item in game and a card appears next to the tooltip. It tells you where the item drops, which monster to kill or which container to open, and about how many tries it takes.",
+    c1b:"Market price from DarkerDB, plus an estimate for the rolls on the item you are looking at, with a 0 to 100 roll score.",
+    c1c:"Stash sort. Open your stash in the lobby and press <code>Ctrl+Shift+S</code> to preview the new layout, then press <code>Enter</code> in game and it moves the items for you. Lobby only, it never runs in a raid.",
+    c1d:"Network HUD. A small readout of your ping to the game server. <code>Ctrl+Shift+N</code> shows or hides it.",
+    c1e:"Auto-update. When a new version is out it asks you first, then downloads only the files that changed. Your key and data are left alone.",
+    c1f:"It only reads the screen. It does not read game memory or inject anything into the game.",
     c2Title:"How to use", c2Kicker:"Four steps",
-    c2s1:"Download the archive and unzip it anywhere.",
-    c2s2:'Put your DarkerDB API key — one line, no spaces — into <code>data\\api_key.txt</code>. <a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">Get a key</a>.',
-    c2s3:"Run <code>grimroute-overlay.exe</code>, and set the game to borderless windowed.",
-    c2s4:"Open the console <b>DATA</b> tab and hit <b>Sync now</b> — also after every game patch.",
-    c2h1:"<code>Ctrl+Shift+H</code> — toggle hover recognition on / off.",
-    c2h2:"<code>Ctrl+Shift+R</code> — open the interactive panel (ROUTES | MARKET); <code>Esc</code> closes it.",
-    c3Title:"Download", c3Kicker:"Latest release",
-    c3Btn:"Download on GitHub", c3Note:"Windows 10/11 · Free · Beta",
-    c3Sub:"The archive ships without a cache database — the first sync fills it with your own API key, which takes one to three minutes.",
-    f1:'Artwork, fonts and UI ornaments © IRONMACE Co., Ltd., from the official site <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>. GrimRoute is a fan-made tool and is not affiliated with or endorsed by IRONMACE.',
-    f2:"Data: DarkerDB API, darkloot.net."
+    c2s1:"Install. China mirror: run <code>grimroute-setup.exe</code> and pick a folder. GitHub: unzip the zip anywhere. Don't use Program Files, the updater needs to write to that folder.",
+    c2s2:'Paste your DarkerDB API key into <code>data\\api_key.txt</code> in that folder. One line, no spaces. <a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">Get a key here</a>.',
+    c2s3:"Set the game to borderless windowed, then run <code>grimroute-overlay.exe</code>.",
+    c2s4:"In the console, open the <b>DATA</b> tab and click <b>Sync now</b>. The first sync takes 1 to 3 minutes. Sync again after each game patch.",
+    c2h1:"<code>Ctrl+Shift+H</code> hover lookup on or off",
+    c2h2:"<code>Ctrl+Shift+R</code> routes and market panel, <code>Esc</code> closes it",
+    c2h3:"<code>Ctrl+Shift+S</code> stash sort preview, <code>Enter</code> in game to start, <code>Esc</code> to stop",
+    c2h4:"<code>Ctrl+Shift+N</code> network HUD on or off",
+    c3Title:"Download", c3Kicker:"Latest version",
+    c3BtnGh:"Download from GitHub", c3CapGh:"Full zip, for players outside mainland China",
+    c3BtnCn:"China mirror", c3CapCn:"Online installer, about 1 MB",
+    c3Pick:"In mainland China, use the China mirror. Anywhere else, either one works. After install, the tool updates itself.",
+    c3Meta:"Windows 10/11 · Free",
+    c3Sub:"Neither download comes with the cache database. Your first sync builds it with your own API key. If you are on 0.6 or older, download the new version by hand once. From 0.7 on it updates itself.",
+    f1:'Artwork, fonts and UI ornaments are © IRONMACE Co., Ltd., taken from <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>. GrimRoute is made by a player. It is not affiliated with or endorsed by IRONMACE.',
+    f2:"Data: DarkerDB API and darkloot.net."
   },
   zh: {
     nav1:"功能", nav2:"使用方法", nav3:"下载",
-    heroTitle:"GrimRoute — Dark and Darker 实时掉落物查询器",
-    heroTag:"悬停一件装备，立刻知道它从哪掉、掉率多少、值多少金。",
-    c1Title:"功能", c1Kicker:"概览",
-    c1a:"游戏里悬停装备，卡片自动贴在 tooltip 旁边——不用点击、不用切出游戏；只读屏，不注入、不读内存。",
-    c1b:"路线表：去哪刷、打什么怪或开什么容器、期望多少次。",
-    c1c:"实时市场报价，并按你正在看的这件装备的词条给出预估价，附 0–100 词条评分。",
-    c1d:"补丁闸门自动检测游戏更新，对照 游戏 / 数据库 / 缓存 三方版本，把数据同步到当前补丁。",
+    heroTitle:"GrimRoute：Dark and Darker 掉落查询",
+    heroTag:"鼠标放到装备上，就能看到哪里掉、能卖多少。",
+    c1Title:"功能", c1Kicker:"能做什么",
+    c1a:"游戏里鼠标停在装备上，tooltip 旁边会出一张卡片：这件东西在哪掉、打哪个怪或开哪种箱子、大概要刷几次。",
+    c1b:"显示 DarkerDB 上的市场价，再按你手上这件的词条估个价，附 0～100 的词条分。",
+    c1c:"仓库整理。在大厅打开仓库，按 <code>Ctrl+Shift+S</code> 先看整理后的样子，再在游戏里按 <code>Enter</code>，它会自己把东西挪好。只在大厅能用，进局后不会动。",
+    c1d:"网络 HUD。屏幕上一个小框，显示你到游戏服务器的延迟。<code>Ctrl+Shift+N</code> 开关。",
+    c1e:"自动更新。有新版本会先问你，同意后只下载改过的文件，你的 key 和数据不动。",
+    c1f:"只读屏幕，不读游戏内存，也不往游戏里注入东西。",
     c2Title:"使用方法", c2Kicker:"四步",
-    c2s1:"下载压缩包，解压到任意目录。",
-    c2s2:'把 DarkerDB API key（一行、无空格）写入 <code>data\\api_key.txt</code>。<a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">申请 key</a>。',
-    c2s3:"运行 <code>grimroute-overlay.exe</code>，并把游戏设为无边框窗口化。",
-    c2s4:"打开控制台「<b>数据</b>」页，点「<b>立即同步</b>」；每次游戏更新后同样操作。",
-    c2h1:"<code>Ctrl+Shift+H</code> — 开关悬停识别。",
-    c2h2:"<code>Ctrl+Shift+R</code> — 打开可交互面板（路线 | 市场）；<code>Esc</code> 关闭。",
+    c2s1:"安装。国内下载：运行 <code>grimroute-setup.exe</code>，选个目录。GitHub：把 zip 解压到任意目录。别放在 Program Files 里，自动更新要往这个目录写文件。",
+    c2s2:'把 DarkerDB 的 API key 写进安装目录里的 <code>data\\api_key.txt</code>，一行，不要空格。<a href="https://darkerdb.com/dashboard/api-keys" target="_blank" rel="noopener">在这里申请 key</a>。',
+    c2s3:"游戏设成无边框窗口，然后运行 <code>grimroute-overlay.exe</code>。",
+    c2s4:"在控制台的「<b>数据</b>」页点「<b>立即同步</b>」。第一次要 1～3 分钟，之后每次游戏更新完再点一次。",
+    c2h1:"<code>Ctrl+Shift+H</code> 开关悬停识别",
+    c2h2:"<code>Ctrl+Shift+R</code> 打开路线 / 市场面板，<code>Esc</code> 关闭",
+    c2h3:"<code>Ctrl+Shift+S</code> 仓库整理预览，在游戏里按 <code>Enter</code> 开始，<code>Esc</code> 停止",
+    c2h4:"<code>Ctrl+Shift+N</code> 开关网络 HUD",
     c3Title:"下载", c3Kicker:"最新版本",
-    c3Btn:"在 GitHub 下载", c3Note:"Windows 10/11 · 免费 · Beta",
-    c3Sub:"压缩包不含缓存库——首次同步会用你自己的 API key 填充，约 1～3 分钟。",
-    f1:'插画、字体与界面装饰 © IRONMACE Co., Ltd.，取自官方网站 <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>。GrimRoute 是粉丝自制工具，与 IRONMACE 无隶属关系，也未获其认可。',
-    f2:"数据来源：DarkerDB API、darkloot.net。"
+    c3BtnGh:"GitHub 下载", c3CapGh:"完整 zip，适合中国大陆以外",
+    c3BtnCn:"国内下载", c3CapCn:"在线安装器，约 1 MB",
+    c3Pick:"在中国大陆请用国内下载，其他地区两个都行。安装后插件会自动更新。",
+    c3Meta:"Windows 10/11 · 免费",
+    c3Sub:"两种下载都不带缓存库，第一次同步时会用你自己的 key 建好。还在用 0.6 或更早版本的，需要手动下载一次新版，0.7 起会自己更新。",
+    f1:'插画、字体和界面装饰 © IRONMACE Co., Ltd.，取自官网 <a href="https://www.darkanddarker.com/home" target="_blank" rel="noopener">darkanddarker.com</a>。GrimRoute 是玩家自己做的工具，和 IRONMACE 没有关系，也没有得到他们的认可。',
+    f2:"数据：DarkerDB API、darkloot.net。"
   }
 };
 
