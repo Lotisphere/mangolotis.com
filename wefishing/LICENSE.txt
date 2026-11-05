@@ -1,0 +1,16 @@
+WEFISHING
+Copyright (c) 2026 Mangolotis (https://www.mangolotis.com). All rights reserved.
+
+Everything in this directory (/wefishing/): code, shaders, game design, user interface,
+artwork, music and sound, is proprietary and is NOT licensed under the Apache License 2.0
+that applies to other parts of the mangolotis.com repository.
+
+You may play the game at https://www.mangolotis.com/wefishing/.
+No permission is granted to copy, modify, deobfuscate, reverse engineer, redistribute,
+re-host, sublicense or create derivative works from any part of it, in whole or in part,
+without prior written permission from the author.
+
+Third-party component: three.js (vendor/three.module.min.js), Copyright 2010-2024
+three.js authors, MIT License. Its license is unaffected by this notice.
+
+Contact: https://discord.gg/4gqcyqYDnp

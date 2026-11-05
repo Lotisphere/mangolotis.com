@@ -1,0 +1,11 @@
+{
+  "name": "WEFISHING",
+  "short_name": "WEFISHING",
+  "description": "A tiny fishing town where your ideas swim into Haru Fishing.",
+  "start_url": "/wefishing/",
+  "scope": "/wefishing/",
+  "display": "standalone",
+  "background_color": "#2a2747",
+  "theme_color": "#2a2747",
+  "icons": [{ "src": "ui/rod.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
