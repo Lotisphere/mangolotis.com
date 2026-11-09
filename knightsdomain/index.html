@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knights' Domain — Co-op mod for Queen's Domain</title>
+<meta name="description" content="Knights' Domain: a free online co-op mod for Queen's Domain. Explore the intricate world of Queen's Domain together with your friends, up to 4 players.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Knights' Domain — Co-op mod for Queen's Domain">
+<meta property="og:description" content="A hobby-made multiplayer mod. Explore the intricate world of Queen's Domain together with your friends.">
+<meta property="og:url" content="https://www.mangolotis.com/knightsdomain/">
+<meta property="og:image" content="https://www.mangolotis.com/knightsdomain/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.mangolotis.com/knightsdomain/og.jpg">
+<meta name="theme-color" content="#0b1a17">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#d9eadf;
+  --muted:#9fb8ad;
+  --teal:#7fd3b8;
+  --teal-d:#2f6a5c;
+  --deep:#08130f;
+  --panel:rgba(7,20,17,0.86);
+  --gold:#dbba61;
+  --gold-l:#f6e2a0;
+  --gold-d:#7a5524;
+  --cut:14px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#06100d url('bg/static.jpg') center 40%/cover fixed no-repeat;
+  color:var(--ink);
+  font-family:'VT323','Consolas','Microsoft YaHei','PingFang SC',monospace;
+  font-size:23px;line-height:1.35;
+  -webkit-font-smoothing:none;
+  overflow-x:hidden;
+}
+:lang(zh-Hans) body, html:lang(zh-Hans) body{font-family:'VT323','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;}
+html:lang(zh-Hans) .panel p, html:lang(zh-Hans) .panel li{font-size:19px;line-height:1.6;}
+a{color:var(--gold);}
+
+/* ===== background layers ===== */
+#bg{position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;image-rendering:pixelated;z-index:0;opacity:0;transition:opacity 1.2s ease;}
+body.gl-on #bg{opacity:1;}
+.crt{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.22) 2px 3px),
+    radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 100%);}
+.shade{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg, rgba(4,10,8,0.35), rgba(4,10,8,0.12) 50%, rgba(4,10,8,0.35));}
+
+/* ===== PS2-style side rails ===== */
+.rail{position:fixed;top:0;bottom:0;width:46px;z-index:3;pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(219,186,97,0.0), rgba(219,186,97,0.0)),
+    linear-gradient(180deg, #0b221d, #06120f 50%, #0b221d);
+  border-left:2px solid #3d2a0c;border-right:2px solid #3d2a0c;
+  box-shadow:inset 0 0 0 1px rgba(219,186,97,0.35), 0 0 24px rgba(0,0,0,0.6);}
+.rail.l{left:0;} .rail.r{right:0;}
+.rail::before{content:"";position:absolute;inset:0 10px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='44' viewBox='0 0 22 44'%3E%3Cpath d='M11 4 L18 13 L11 22 L4 13Z' fill='%23dbba61' fill-opacity='.75'/%3E%3Cpath d='M11 9 L14 13 L11 17 L8 13Z' fill='%2308130f'/%3E%3Crect x='10' y='24' width='2' height='16' fill='%237fd3b8' fill-opacity='.45'/%3E%3C/svg%3E");
+  background-size:22px 44px;background-repeat:repeat-y;background-position:center 0;
+  animation:railScroll 9s linear infinite;}
+.rail.r::before{animation-direction:reverse;}
+.rail::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(transparent, rgba(127,211,184,0.4), transparent);}
+@keyframes railScroll{to{background-position:center 44px;}}
+
+/* ===== top bar ===== */
+.topbar{position:sticky;top:0;z-index:5;
+  background:linear-gradient(180deg, rgba(5,14,12,0.95), rgba(5,14,12,0.78));
+  border-bottom:2px solid var(--gold-d);box-shadow:0 2px 0 rgba(219,186,97,0.25), 0 6px 18px rgba(0,0,0,0.5);}
+.topbar .in{max-width:1080px;margin:0 auto;padding:0 64px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.wordmark{display:block;line-height:0;text-decoration:none;}
+.wordmark img{height:34px;width:auto;display:block;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.8));}
+.nav{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:flex-end;}
+.nav a{font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-size:10px;letter-spacing:1px;color:var(--ink);text-decoration:none;padding:6px 2px;}
+.nav a:hover,.nav a:focus-visible{color:var(--gold-l);outline:none;}
+.lang{display:flex;border:2px solid var(--gold-d);}
+.lang button{font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-size:10px;background:transparent;color:var(--muted);border:0;padding:6px 9px;cursor:pointer;}
+.lang button + button{border-left:2px solid var(--gold-d);}
+.lang button.active{background:var(--gold);color:#140c04;}
+#btn-zh{font-family:'Microsoft YaHei','PingFang SC',sans-serif;font-size:13px;padding:3px 9px;}
+
+/* ===== layout ===== */
+main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:28px 64px 30px;}
+.hero{text-align:center;padding:16px 0 26px;}
+.hero h1{margin:0;}
+.hero h1 img{display:block;width:min(620px, 92%);height:auto;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.6));}
+.hero .tag{font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-size:13px;line-height:1.7;color:var(--gold-l);margin:8px 0 14px;letter-spacing:1px;text-shadow:2px 2px 0 #000;}
+.hero .intro{max-width:720px;margin:0 auto;font-size:25px;text-shadow:2px 2px 0 #000, 0 0 12px rgba(0,0,0,0.9);}
+
+/* ===== PS2 panels: thick frame, chamfered corners ===== */
+.panel{position:relative;margin:0 0 34px;padding:3px;
+  clip-path:polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+  background:linear-gradient(135deg, var(--gold-l), var(--gold) 30%, var(--gold-d) 55%, var(--gold) 80%, #4a3410);
+  scroll-margin-top:80px;}
+.panel > .in{
+  clip-path:polygon(calc(var(--cut) - 1px) 0, calc(100% - var(--cut) + 1px) 0, 100% calc(var(--cut) - 1px), 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, calc(var(--cut) - 1px) 100%, 0 calc(100% - var(--cut) + 1px), 0 calc(var(--cut) - 1px));
+  background:
+    linear-gradient(180deg, rgba(127,211,184,0.07), rgba(0,0,0,0) 40%),
+    var(--panel);
+  box-shadow:inset 0 0 0 2px #0b1a16, inset 0 0 0 3px rgba(127,211,184,0.18);
+  padding:0 0 22px;}
+.panel h2{margin:0 0 16px;padding:12px 22px 11px;display:flex;align-items:center;gap:12px;
+  font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-weight:400;font-size:14px;letter-spacing:2px;color:var(--gold-l);
+  background:linear-gradient(90deg, rgba(47,106,92,0.85), rgba(47,106,92,0.25) 70%, rgba(47,106,92,0));
+  border-bottom:2px solid rgba(219,186,97,0.45);text-shadow:2px 2px 0 #000;}
+.panel h2::before{content:"";width:10px;height:10px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 0 2px #140c04;flex:0 0 auto;}
+.panel h2 .no{margin-left:auto;font-size:10px;color:var(--teal);letter-spacing:1px;}
+.panel .body{padding:0 26px;}
+.panel p{margin:0 0 12px;}
+.note{color:var(--muted);font-size:21px;}
+code{font-family:'VT323',monospace;font-size:1em;color:var(--gold-l);background:rgba(219,186,97,0.12);border:1px solid rgba(219,186,97,0.35);padding:0 6px;white-space:nowrap;}
+kbd{font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-size:12px;color:#140c04;background:var(--gold);padding:2px 6px;box-shadow:inset -2px -2px 0 var(--gold-d), inset 2px 2px 0 var(--gold-l);}
+
+/* menu-style lists: a cursor appears on the hovered row, like a console menu */
+ul.menu,ol.menu{list-style:none;margin:0;padding:0;}
+.menu li{position:relative;padding:7px 12px 7px 40px;margin:0 0 4px;border:1px solid transparent;}
+.menu li::before{content:"";position:absolute;left:14px;top:16px;width:9px;height:9px;background:var(--teal-d);transform:rotate(45deg);box-shadow:0 0 0 1px var(--teal);}
+.menu li:hover{background:linear-gradient(90deg, rgba(219,186,97,0.18), rgba(219,186,97,0));border-color:rgba(219,186,97,0.35);}
+.menu li:hover::before{background:var(--gold);box-shadow:0 0 0 1px var(--gold-l);animation:blink .8s steps(2) infinite;}
+ol.menu{counter-reset:s;}
+ol.menu li{counter-increment:s;padding-left:58px;}
+ol.menu li::before{content:counter(s);transform:none;width:30px;height:24px;top:8px;left:10px;background:#0b1a16;box-shadow:inset 0 0 0 2px var(--gold-d);
+  font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-size:11px;color:var(--gold-l);display:flex;align-items:center;justify-content:center;}
+ol.menu li:hover::before{background:var(--gold);color:#140c04;animation:none;}
+@keyframes blink{50%{opacity:.25;}}
+
+/* ===== buttons ===== */
+.dl{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:center;justify-content:center;margin:6px 0 16px;}
+.btn{--c:10px;display:inline-flex;align-items:center;justify-content:center;gap:12px;text-decoration:none;
+  clip-path:polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+  font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;letter-spacing:1px;transition:transform .15s ease, filter .15s ease;}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px);filter:brightness(1.12);outline:none;}
+.btn.primary{font-size:17px;padding:22px 34px;color:#140c04;
+  background:linear-gradient(180deg, var(--gold-l), var(--gold) 45%, #b48a3c 55%, var(--gold));
+  box-shadow:inset 0 -4px 0 var(--gold-d), inset 0 3px 0 rgba(255,255,255,0.5);
+  animation:pulse 1.6s ease-in-out infinite;}
+.btn.primary svg{width:22px;height:22px;}
+@keyframes pulse{50%{filter:brightness(1.18) drop-shadow(0 0 6px rgba(246,226,160,0.6));}}
+.btn.secondary{font-size:11px;padding:16px 20px;color:var(--teal);background:rgba(8,19,15,0.9);box-shadow:inset 0 0 0 2px var(--teal-d), inset 0 0 0 3px rgba(127,211,184,0.4);}
+.btn.secondary:hover{color:var(--gold-l);}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--gold-l);}
+
+/* ===== footer ===== */
+footer{position:relative;z-index:2;text-align:center;padding:10px 64px 46px;color:var(--muted);font-size:20px;}
+footer a{font-family:'Press Start 2P','Microsoft YaHei','PingFang SC','Noto Sans SC',monospace;font-size:11px;text-decoration:none;color:var(--gold);}
+footer a:hover{color:var(--gold-l);}
+footer p{margin:10px 0 0;}
+
+html:lang(zh-Hans) .panel h2{font-size:16px;letter-spacing:3px;}
+html:lang(zh-Hans) .nav a{font-size:14px;}
+html:lang(zh-Hans) .hero .tag{font-size:15px;}
+html:lang(zh-Hans) .btn.primary{font-size:20px;}
+html:lang(zh-Hans) .btn.secondary{font-size:14px;}
+@media (max-width:900px){
+  code{white-space:normal;word-break:break-all;}
+  .rail{display:none;}
+  .topbar .in{padding:10px 16px;height:auto;flex-wrap:wrap;}
+  .nav{gap:12px;}
+  .nav a.sec{display:none;}
+  main{padding:18px 16px 20px;}
+  footer{padding:10px 16px 40px;}
+  .panel .body{padding:0 16px;}
+  .panel h2{font-size:12px;padding:11px 14px;}
+  .menu li{padding-left:34px;}
+  ol.menu li{padding-left:50px;}
+  .btn.primary{font-size:14px;padding:18px 22px;width:100%;}
+  .btn.secondary{width:100%;}
+  body{font-size:21px;}
+  .hero .tag{font-size:11px;}
+  .hero .intro{font-size:22px;}
+}
+@media (prefers-reduced-motion: reduce){
+  .rail::before,.btn.primary,.menu li:hover::before{animation:none;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="shade"></div>
+<div class="crt"></div>
+<div class="rail l" aria-hidden="true"></div>
+<div class="rail r" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="in">
+    <a class="wordmark" href="#top"><img src="wordmark.webp" width="480" height="74" alt="Knights' Domain"></a>
+    <nav class="nav">
+      <a class="sec" href="#features" data-i18n="navF">FEATURES</a>
+      <a class="sec" href="#install" data-i18n="navI">INSTALL</a>
+      <a class="sec" href="#play" data-i18n="navP">PLAY</a>
+      <a href="#download" data-i18n="navD">DOWNLOAD</a>
+      <span class="lang" role="group" aria-label="Language">
+        <button type="button" id="btn-en" onclick="setLang('en')">EN</button>
+        <button type="button" id="btn-zh" onclick="setLang('zh')">中</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1><img src="title.webp" width="1200" height="797" alt="Knights' Domain"></h1>
+    <p class="tag" data-i18n="tag">Online co-op mod for Queen's Domain</p>
+    <p class="intro" data-i18n="intro">For one of 2026's finest exploration games: a hobby-made multiplayer mod. Explore the intricate world of Queen's Domain together with your friends.</p>
+  </section>
+
+  <section class="panel" id="download"><div class="in">
+    <h2><span data-i18n="dlT">DOWNLOAD</span><span class="no">01</span></h2>
+    <div class="body">
+      <div class="dl">
+        <a class="btn primary" href="https://github.com/Lotisphere/KnightsDomain/releases/latest" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12M6.5 9.5 12 15l5.5-5.5M4 17.5V21h16v-3.5" fill="none" stroke="#140c04" stroke-width="2.6" stroke-linecap="square"/></svg>
+          <span data-i18n="dlBtn">DOWNLOAD</span>
+        </a>
+        <a class="btn secondary" href="https://store.steampowered.com/app/1799840/Queens_Domain/" target="_blank" rel="noopener noreferrer" data-i18n="steamBtn">Get Queen's Domain on Steam</a>
+      </div>
+      <p class="note" data-i18n="dlNote">Requires the Steam version of Queen's Domain. Each player needs their own copy; the mod checks this when you start the game.</p>
+    </div>
+  </div></section>
+
+  <section class="panel" id="features"><div class="in">
+    <h2><span data-i18n="fT">FEATURES</span><span class="no">02</span></h2>
+    <div class="body">
+      <ul class="menu">
+        <li data-i18n="f1">Up to 4 players (host + 3)</li>
+        <li data-i18n="f2">Join through Steam friends or the in-game <kbd>F5</kbd> menu</li>
+        <li data-i18n="f3">Enemies, attacks and health stay in sync — enemies chase and fight whoever they're targeting</li>
+        <li data-i18n="f4">Your friends appear as knights holding the weapon they actually have equipped</li>
+        <li data-i18n="f5">Enemy health scales slightly with party size</li>
+        <li data-i18n="f6">Progress belongs to the host; everyone keeps their own character</li>
+        <li data-i18n="f7">English, 中文 and 日本語 menus</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <section class="panel" id="install"><div class="in">
+    <h2><span data-i18n="iT">HOW TO INSTALL</span><span class="no">03</span></h2>
+    <div class="body">
+      <ol class="menu">
+        <li data-i18n="i1">Download the zip.</li>
+        <li data-i18n="i2">Extract it into the game folder (<code>steamapps/common/QueensDomain</code>) so that <code>xinput1_3.dll</code> lands in <code>QueensDomain/Binaries/Win64/</code>.</li>
+        <li data-i18n="i3">Launch the game from Steam.</li>
+        <li data-i18n="i4">Press <kbd>F5</kbd> in game.</li>
+      </ol>
+    </div>
+  </div></section>
+
+  <section class="panel" id="play"><div class="in">
+    <h2><span data-i18n="pT">HOW TO PLAY TOGETHER</span><span class="no">04</span></h2>
+    <div class="body">
+      <ul class="menu">
+        <li data-i18n="p1"><b>Host:</b> <kbd>F5</kbd> → Co-op → Create room.</li>
+        <li data-i18n="p2"><b>Friends:</b> right-click the host in the Steam friends list → Join Game, or <kbd>F5</kbd> → Co-op → Friends' rooms.</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <section class="panel" id="about"><div class="in">
+    <h2><span data-i18n="aT">ABOUT</span><span class="no">05</span></h2>
+    <div class="body">
+      <p data-i18n="a1">A free fan-made mod by Mangolotis. Not affiliated with the developer of Queen's Domain. Please support the game by buying it on Steam.</p>
+    </div>
+  </div></section>
+</main>
+
+<footer>
+  <a href="../" data-i18n="back">← MANGOLOTIS.COM</a>
+  <p>© 2026 Mangolotis</p>
+</footer>
+
+<script>
+var I18N = {
+  en: {
+    navF:"FEATURES", navI:"INSTALL", navP:"PLAY", navD:"DOWNLOAD",
+    tag:"Online co-op mod for Queen's Domain",
+    intro:"For one of 2026's finest exploration games: a hobby-made multiplayer mod. Explore the intricate world of Queen's Domain together with your friends.",
+    dlT:"DOWNLOAD", dlBtn:"DOWNLOAD", steamBtn:"Get Queen's Domain on Steam",
+    dlNote:"Requires the Steam version of Queen's Domain. Each player needs their own copy; the mod checks this when you start the game.",
+    fT:"FEATURES",
+    f1:"Up to 4 players (host + 3)",
+    f2:"Join through Steam friends or the in-game <kbd>F5</kbd> menu",
+    f3:"Enemies, attacks and health stay in sync — enemies chase and fight whoever they're targeting",
+    f4:"Your friends appear as knights holding the weapon they actually have equipped",
+    f5:"Enemy health scales slightly with party size",
+    f6:"Progress belongs to the host; everyone keeps their own character",
+    f7:"English, 中文 and 日本語 menus",
+    iT:"HOW TO INSTALL",
+    i1:"Download the zip.",
+    i2:"Extract it into the game folder (<code>steamapps/common/QueensDomain</code>) so that <code>xinput1_3.dll</code> lands in <code>QueensDomain/Binaries/Win64/</code>.",
+    i3:"Launch the game from Steam.",
+    i4:"Press <kbd>F5</kbd> in game.",
+    pT:"HOW TO PLAY TOGETHER",
+    p1:"<b>Host:</b> <kbd>F5</kbd> → Co-op → Create room.",
+    p2:"<b>Friends:</b> right-click the host in the Steam friends list → Join Game, or <kbd>F5</kbd> → Co-op → Friends' rooms.",
+    aT:"ABOUT",
+    a1:"A free fan-made mod by Mangolotis. Not affiliated with the developer of Queen's Domain. Please support the game by buying it on Steam.",
+    back:"← MANGOLOTIS.COM"
+  },
+  zh: {
+    navF:"功能", navI:"安装", navP:"联机", navD:"下载",
+    tag:"Queen's Domain（女王魔域）联机合作 MOD",
+    intro:"献给 2026 年探索设计绝佳的独立游戏。一个出于个人兴趣开发的多人联机 MOD，与好友一起体验精妙的女王魔域。",
+    dlT:"下载", dlBtn:"下载", steamBtn:"在 Steam 购买 Queen's Domain",
+    dlNote:"需要 Steam 版 Queen's Domain。每位玩家都需要拥有自己的一份游戏，MOD 会在启动游戏时检查。",
+    fT:"功能",
+    f1:"最多 4 人（房主 + 3 人）",
+    f2:"通过 Steam 好友或游戏内的 <kbd>F5</kbd> 菜单加入",
+    f3:"敌人、攻击和血量全程同步：敌人会追击并攻击它们锁定的那位玩家",
+    f4:"好友以骑士的样子出现，手里拿着他们实际装备的武器",
+    f5:"敌人血量随队伍人数略微提高",
+    f6:"进度归房主所有，每个人保留自己的角色",
+    f7:"English、中文、日本語 三种菜单语言",
+    iT:"安装方法",
+    i1:"下载 zip。",
+    i2:"解压到游戏目录（<code>steamapps/common/QueensDomain</code>），让 <code>xinput1_3.dll</code> 位于 <code>QueensDomain/Binaries/Win64/</code> 里。",
+    i3:"从 Steam 启动游戏。",
+    i4:"在游戏里按 <kbd>F5</kbd>。",
+    pT:"如何一起玩",
+    p1:"<b>房主：</b><kbd>F5</kbd> → Co-op → Create room。",
+    p2:"<b>好友：</b>在 Steam 好友列表里右键房主 → 加入游戏，或者 <kbd>F5</kbd> → Co-op → Friends' rooms。",
+    aT:"关于",
+    a1:"由 Mangolotis 制作的免费粉丝 MOD，与 Queen's Domain 的开发者没有关联。请在 Steam 购买游戏，支持开发者。",
+    back:"← MANGOLOTIS.COM"
+  }
+};
+function setLang(lang){
+  if(!I18N[lang]){ lang = 'en'; }
+  var dict = I18N[lang], nodes = document.querySelectorAll('[data-i18n]');
+  for(var i=0;i<nodes.length;i++){ var k = nodes[i].getAttribute('data-i18n'); if(dict[k] !== undefined){ nodes[i].innerHTML = dict[k]; } }
+  document.documentElement.lang = (lang === 'zh') ? 'zh-Hans' : 'en';
+  document.getElementById('btn-en').className = (lang === 'en') ? 'active' : '';
+  document.getElementById('btn-zh').className = (lang === 'zh') ? 'active' : '';
+  try { localStorage.setItem('knightsdomain-lang', lang); } catch(e){}
+}
+(function(){ var s = 'en'; try { s = localStorage.getItem('knightsdomain-lang') || 'en'; } catch(e){} setLang(s); })();
+</script>
+<script type="module" src="js/bg.js"></script>
+</body>
+</html>
