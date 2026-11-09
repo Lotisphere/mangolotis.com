@@ -147,6 +147,9 @@ ol.menu li:hover::before{background:var(--gold);color:#140c04;animation:none;}
 .btn.secondary{font-size:11px;padding:16px 20px;color:var(--teal);background:rgba(8,19,15,0.9);box-shadow:inset 0 0 0 2px var(--teal-d), inset 0 0 0 3px rgba(127,211,184,0.4);}
 .btn.secondary:hover{color:var(--gold-l);}
 .btn:focus-visible{box-shadow:0 0 0 3px var(--gold-l);}
+.btn.primary.mirror{animation:none;}
+.mirror-meta{font-size:18px;}
+.mirror-meta code.sha{white-space:normal;word-break:break-all;}
 
 /* ===== footer ===== */
 footer{position:relative;z-index:2;text-align:center;padding:10px 64px 46px;color:var(--muted);font-size:20px;}
@@ -220,8 +223,14 @@ html:lang(zh-Hans) .btn.secondary{font-size:14px;}
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12M6.5 9.5 12 15l5.5-5.5M4 17.5V21h16v-3.5" fill="none" stroke="#140c04" stroke-width="2.6" stroke-linecap="square"/></svg>
           <span data-i18n="dlBtn">DOWNLOAD</span>
         </a>
+        <a class="btn primary mirror" href="https://kd.mangolotis.com/KnightsDomain-1.0.2.zip">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12M6.5 9.5 12 15l5.5-5.5M4 17.5V21h16v-3.5" fill="none" stroke="#140c04" stroke-width="2.6" stroke-linecap="square"/></svg>
+          <span data-i18n="mirBtn">MIRROR · v1.0.2</span>
+        </a>
         <a class="btn secondary" href="https://store.steampowered.com/app/1799840/Queens_Domain/" target="_blank" rel="noopener noreferrer" data-i18n="steamBtn">Get Queen's Domain on Steam</a>
       </div>
+      <p class="note" data-i18n="mirPick">In mainland China, use the mirror. Anywhere else, either one works.</p>
+      <p class="note mirror-meta"><span data-i18n="mirMeta">Mirror file:</span> <code>KnightsDomain-1.0.2.zip</code> · 827 KB · SHA256 <code class="sha">c985c0d128641f1ba46942c323a4cf5946fa5ee5ee91e60317da07416c6d332d</code></p>
       <p class="note" data-i18n="dlNote">Requires the Steam version of Queen's Domain. Each player needs their own copy; the mod checks this when you start the game.</p>
     </div>
   </div></section>
@@ -283,6 +292,7 @@ var I18N = {
     tag:"Online co-op mod for Queen's Domain",
     intro:"For one of 2026's finest exploration games: a hobby-made multiplayer mod. Explore the intricate world of Queen's Domain together with your friends.",
     dlT:"DOWNLOAD", dlBtn:"DOWNLOAD", steamBtn:"Get Queen's Domain on Steam",
+    mirBtn:"MIRROR · v1.0.2", mirPick:"In mainland China, use the mirror. Anywhere else, either one works.", mirMeta:"Mirror file:",
     dlNote:"Requires the Steam version of Queen's Domain. Each player needs their own copy; the mod checks this when you start the game.",
     fT:"FEATURES",
     f1:"Up to 4 players (host + 3)",
@@ -309,6 +319,7 @@ var I18N = {
     tag:"Queen's Domain（女王魔域）联机合作 MOD",
     intro:"献给 2026 年探索设计绝佳的独立游戏。一个出于个人兴趣开发的多人联机 MOD，与好友一起体验精妙的女王魔域。",
     dlT:"下载", dlBtn:"下载", steamBtn:"在 Steam 购买 Queen's Domain",
+    mirBtn:"国内镜像 · v1.0.2", mirPick:"中国大陆用户请使用国内镜像，其他地区两个都可以。", mirMeta:"镜像文件：",
     dlNote:"需要 Steam 版 Queen's Domain。每位玩家都需要拥有自己的一份游戏，MOD 会在启动游戏时检查。",
     fT:"功能",
     f1:"最多 4 人（房主 + 3 人）",
